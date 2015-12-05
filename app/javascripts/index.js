@@ -3,6 +3,7 @@ var remote = require('remote');
 var dialog = remote.require('dialog');
 
 var serverUrl = 'http://localHost:3000';
+var socket = io(serverUrl);
 
 var watcher;
 
@@ -14,16 +15,19 @@ var sendFileToServer = function(directoryName, fileName, data, url) {
   var dirArray = directoryName.split("/");
   var currentDir = dirArray[dirArray.length-1]
 
-  formData.append('fileName', currentDir + '/' + fileName)
-  formData.append('fileContents', data);
+  // formData.append('fileName', currentDir + '/' + fileName)
+  // formData.append('fileContents', data);
+  //
+  // $.ajax({
+  //   url: url,
+  //   method: "POST",
+  //   data: formData,
+  //   contentType: false,
+  //   processData: false
+  // })
 
-  $.ajax({
-    url: url,
-    method: "POST",
-    data: formData,
-    contentType: false,
-    processData: false
-  })
+  socket.emit('file received', {fileName: currentDir + '/' + fileName, fileContents: data});
+
 }
 
 // deletes a file from the server where directoryName/fileName is the path of the file,
@@ -34,16 +38,18 @@ var deleteFileFromServer = function(directoryName, fileName, url) {
   var dirArray = directoryName.split("/");
   var currentDir = dirArray[dirArray.length - 1]
 
-  formData.append('fileName', currentDir + '/' + fileName);
-  formData.append('deleted', true);
+  // formData.append('fileName', currentDir + '/' + fileName);
+  // formData.append('deleted', true);
+  //
+  // $.ajax({
+  //   url: url,
+  //   method: "POST",
+  //   data: formData,
+  //   contentType: false,
+  //   processData: false
+  // })
 
-  $.ajax({
-    url: url,
-    method: "POST",
-    data: formData,
-    contentType: false,
-    processData: false
-  })
+  socket.emit('file received', {fileName: currentDir + '/' + fileName, deleted: true});
 }
 
 var sendDirectory = function(directoryName, subDirectories) {
@@ -109,5 +115,15 @@ $(function() {
       $("#log").append("<div>Stopped listening to folder</div>");
     }
   })
+
+  // $('form').submit(function(){
+  //  socket.emit('chat message', $('#m').val());
+  //  $('#m').val('');
+  //  event.preventDefault();
+  // });
+
+  socket.on('file received', function(msg){
+    $('#file').text(msg);
+  });
 
 })

@@ -5,13 +5,17 @@
     <title>File Viewer</title>
 
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
+    <script src="http://localHost:3000/socket.io/socket.io.js"></script>
     <script>require('../javascripts/index.js')</script>
   </head>
   <body>
-    <button id="listenFolder">Select Folder To Listen To</button>
-    <button id="stopListening">Stop Listening To Folder</button>
+    <button id="listenFolder">Select Folder to Listen to</button>
+    <button id="stopListening">Stop Listening to Folder</button>
 
     <div id="log"></div>
+
+    <div id="file" style="white-space: pre-wrap;"></div>
+
 
   </body>
 </html>
