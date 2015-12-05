@@ -5,12 +5,30 @@
     <title>File Viewer</title>
 
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
-    <script src="http://localHost:3000/socket.io/socket.io.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>require('../javascripts/index.js')</script>
   </head>
   <body>
-    <button id="listenFolder">Select Folder to Listen to</button>
-    <button id="stopListening">Stop Listening to Folder</button>
+    <div>
+      <p>
+        Listens to chosen local folder. All files in folder are sent to the server
+        and any file changes will automatically be sent unless the 'Stop Listening to Folder'
+        button is pressed.
+      </p>
+      <button id="listenFolder">Select Folder to Listen to</button>
+      <button id="stopListening">Stop Listening to Folder</button>
+    </div>
+
+    <div>
+      <p>
+        Connects to a chosen folder on the server and stores all contents to the
+        local folder specifed. When connected, any change the owner of the folder
+        makes to files will automatically be stored to the chosen folder.
+      </p>
+      <input id="serverFolder" type="text" placeholder="Choose a Server Folder"/>
+      <button id="connectFolder">Connect to Server Folder</button>
+      <button id="disconnectFolder">Disconnect from Server Folder</button>
+    </div>
 
     <div id="log"></div>
 

@@ -18,8 +18,8 @@ app.on('window-all-closed', function() {
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800
+        height: 768,
+        width: 1200
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
