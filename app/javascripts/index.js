@@ -80,6 +80,10 @@ $(function() {
     }
 
     dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
+      if (!directoryNames) {
+        return;
+      }
+
       $("#log").append("<div>Listening to " + directoryNames[0] + "</div>");
 
       sendDirectory(directoryNames[0], "");
