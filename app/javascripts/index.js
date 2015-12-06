@@ -6,6 +6,8 @@ var serverUrl = 'http://localhost:3000';
 var socket = io(serverUrl);
 
 var watcher;
+var connectedDirectory;
+var serverDirectory;
 
 // ask the server to be assigned to a room. This way only clients in the same room
 // will be able to receive file changes.
@@ -67,25 +69,25 @@ $(function() {
     dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
       if (!directoryNames) {
         return;
-      }
+      } else {
+        $("#log").append("<div>Listening to " + directoryNames[0] + "</div>");
 
-      $("#log").append("<div>Listening to " + directoryNames[0] + "</div>");
+        requestRoom(directoryNames[0]);
 
-      requestRoom(directoryNames[0]);
+        sendDirectory(directoryNames[0], "");
 
-      sendDirectory(directoryNames[0], "");
-
-      watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
-        fs.readFile(directoryNames[0] + '/' + fileName, 'utf-8', function(err, data) {
-          if (err) {
-            // delete from server
-            deleteFileFromServer(directoryNames[0], fileName);
-          } else {
-            // send to server
-            sendFileToServer(directoryNames[0], fileName, data);
-          }
+        watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
+          fs.readFile(directoryNames[0] + '/' + fileName, 'utf-8', function(err, data) {
+            if (err) {
+              // delete from server
+              deleteFileFromServer(directoryNames[0], fileName);
+            } else {
+              // send to server
+              sendFileToServer(directoryNames[0], fileName, data);
+            }
+          })
         })
-      })
+      }
     })
   })
 
@@ -101,27 +103,72 @@ $(function() {
     dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
       if (!directoryNames) {
         return;
+      } else {
+        serverFolder = $("#serverFolder").val();;
+        if (serverFolder === "") {
+          $("#log").append("<div>Please enter a server folder first</div>");
+          return;
+        }
+
+        connectedDirectory = directoryNames[0];
+        serverDirectory = serverFolder;
+
+        socket.emit('connect folder', serverFolder);
+
+        $("#log").append("<div>Connected to: " + serverFolder + ", storing to " + directoryNames[0] + "</div>");
+
       }
-
-      serverFolder = $("#serverFolder").val();;
-      if (serverFolder === "") {
-        $("#log").append("<div>Please enter a server folder first</div>");
-        return;
-      }
-
-      socket.emit('connect folder', serverFolder);
-
-      $("#log").append("<div>Connected to: " + serverFolder + ", storing to " + directoryNames[0] + "</div>");
-
     })
+  })
+
+  $("#disconnectFolder").on("click", function() {
+    if (connectedDirectory && serverDirectory) {
+      socket.emit('disconnect folder', serverDirectory);
+      $("#log").append("<div>Disconnected from: " + serverDirectory +  ", stopped storing to " + connectedDirectory + "</div>");
+      connectedDirectory = null;
+      serverDirectory = null;
+    }
   })
 
   socket.on('send file', function(msg) {
     //$('#file').text(msg.fileName);
-    console.log(msg.fileName);
+    if (!connectedDirectory) {
+      console.log("Error! Received an unknown file")
+    } else {
+      // else write file to the connected directory.
+      // get directory of file to be saved
+      var dirFileArray = msg.fileName.split("/");
+      var directory = connectedDirectory;
+      for (var i = 0; i < dirFileArray.length - 1; i++) {
+        directory = directory + '/' + dirFileArray[i];
+      }
+
+      // try to create the directory
+      fs.mkdir(directory, function(err) {
+        // if file should be deleted, delete it
+        if (msg.deleted) {
+          fs.unlink(connectedDirectory + '/' + msg.fileName, function(err) {
+            if (err) {
+              return console.log(err);
+            }
+          });
+        // otherwise, save the file
+        } else {
+          fs.writeFile(connectedDirectory + '/' + msg.fileName, msg.fileContents, function(err) {
+              if(err) {
+                  return console.log(err);
+              }
+
+              console.log("The file was saved!");
+          });
+        }
+      });
+    }
   });
 
   socket.on('folder does not exist', function() {
+    connectedDirectory = null;
+    serverDirectory = null;
     ("#log").append("<div>Folder does not exit</div>")
   })
 
