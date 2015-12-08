@@ -1,4 +1,5 @@
 var fs = require('fs');
+var parser = require('gitignore-parser')
 var remote = require('remote');
 var dialog = remote.require('dialog');
 
@@ -8,8 +9,34 @@ var socket = io(serverUrl);
 var watcher;
 var connectedDirectory;
 var serverDirectory;
-var gitIgnore = []; // a list of folders/files to be ignored.
+var gitignore;
 
+// sets up a gitignore with a gitignore file if it exists in the fileNames array
+var setUpGitIgnore = function(directoryName, fileNames, callback) {
+  var index = 0;
+  fileNames.forEach(function(fileName) {
+    if (fileName === ".gitignore") {
+      fs.readFile(directoryName + "/" + fileName, 'utf8', function(err, data) {
+        gitignore = parser.compile(data);
+        console.log("gitignore created");
+        index++;
+        if (index === fileNames.length) {
+          if (callback) {
+            callback();
+          }
+        }
+      });
+    } else {
+      index++;
+      if (index === fileNames.length) {
+        if (callback) {
+          callback();
+        }
+      }
+    }
+
+  });
+}
 
 // removes a directory asynchronously
 var rmdirAsync = function(path, callback) {
@@ -69,7 +96,6 @@ var sendFileToServer = function(directoryName, fileName, data) {
   var dirArray = directoryName.split("/");
   var currentDir = dirArray[dirArray.length-1];
   socket.emit('send file', {fileName: currentDir + '/' + fileName, fileContents: data});
-
 }
 
 // deletes a file from the server where directoryName/fileName is the path of the file,
@@ -79,38 +105,49 @@ var deleteFileFromServer = function(directoryName, fileName) {
   socket.emit('send file', {fileName: currentDir + '/' + fileName, deleted: true});
 }
 
+var sendDirectoryCount = 0;
 var sendDirectory = function(directoryName, subDirectories) {
+  sendDirectoryCount++;
   //var gitIgnore = "test 2.txt";
   fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
     if (err) {
-      $("#errors").html("Error: folder contains too many files or does not exist");
+      $("#errors").html("Error: folder contains too many files or does not exist. Try creating a .gitignore file.");
       return;
     }
-    // fileName could be a file or a directory
-    fileNames.forEach(function(fileName){
-      fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
-        var subDirs;
-        if (subDirectories === "") {
-          subDirs = fileName;
-        } else {
-          subDirs = subDirectories + '/' + fileName;
-        }
-        if (stats.isFile() && stats.size > 16777216) {
-          console.log("Error, " + fileName + " is over 16MB and can't be sent");
-        } else if (stats.isDirectory()) {
-          sendDirectory(directoryName, subDirs);
-        } else {
-          fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
-            // check if fileName is in gitIgnore
-            //if (fileName !== gitIgnore) {
-              // send to server
-              sendFileToServer(directoryName, subDirs, data);
-            //}
 
-          });
-        }
+    var sendTheFiles = function() {
+      // fileName could be a file or a directory
+      fileNames.forEach(function(fileName){
+        fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
+          var subDirs;
+          if (subDirectories === "") {
+            subDirs = fileName;
+          } else {
+            subDirs = subDirectories + '/' + fileName;
+          }
+          if (gitignore && gitignore.denies(subDirs)) {
+            console.log("denied " + subDirs);
+            return;
+          }
+          if (stats.isFile() && stats.size > 16777216) {
+            console.log("Error, " + fileName + " is over 16MB and can't be sent");
+          } else if (stats.isDirectory()) {
+            sendDirectory(directoryName, subDirs);
+          } else {
+            fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
+              sendFileToServer(directoryName, subDirs, data);
+            });
+          }
+        });
       });
-    });
+    }
+
+    if (!gitignore && sendDirectoryCount === 1) {
+      setUpGitIgnore(directoryName, fileNames, sendTheFiles);
+    } else {
+      sendTheFiles();
+    }
+
   });
 }
 
@@ -120,6 +157,8 @@ $(function() {
     if (watcher) {
       watcher.close();
       watcher = null;
+      gitignore = null;
+      sendDirectoryCount = 0;
       $("#log").append("<div>Stopped listening to folder</div>");
     }
 
@@ -133,6 +172,10 @@ $(function() {
 
         watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
           fs.stat(directoryNames[0] + '/' + fileName, function(err, stats) {
+            if (gitignore && gitignore.denies(fileName)) {
+              console.log("denied " + fileName);
+              return;
+            }
             if (err) {
               // nonexistent so delete from server
               deleteFileFromServer(directoryNames[0], fileName);
@@ -163,6 +206,8 @@ $(function() {
     if (watcher) {
       watcher.close();
       watcher = null;
+      gitignore = null;
+      sendDirectoryCount = 0;
       $("#log").append("<div>Stopped listening to folder</div>");
     }
   });
