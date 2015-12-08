@@ -8,6 +8,50 @@ var socket = io(serverUrl);
 var watcher;
 var connectedDirectory;
 var serverDirectory;
+var gitIgnore = []; // a list of folders/files to be ignored.
+
+
+// removes a directory asynchronously
+var rmdirAsync = function(path, callback) {
+	fs.readdir(path, function(err, files) {
+		if(err) {
+			// Pass the error on to callback
+			callback(err, []);
+			return;
+		}
+		var wait = files.length,
+			count = 0,
+			folderDone = function(err) {
+			count++;
+			// If we cleaned out all the files, continue
+			if( count >= wait || err) {
+				fs.rmdir(path,callback);
+			}
+		};
+		// Empty directory to bail early
+		if(!wait) {
+			folderDone();
+			return;
+		}
+
+		// Remove one or more trailing slash to keep from doubling up
+		path = path.replace(/\/+$/,"");
+		files.forEach(function(file) {
+			var curPath = path + "/" + file;
+			fs.lstat(curPath, function(err, stats) {
+				if( err ) {
+					callback(err, []);
+					return;
+				}
+				if( stats.isDirectory() ) {
+					rmdirAsync(curPath, folderDone);
+				} else {
+					fs.unlink(curPath, folderDone);
+				}
+			});
+		});
+	});
+};
 
 // converts an ArrayBuffer to a Buffer
 var toBuffer = function(ab) {
@@ -36,23 +80,34 @@ var deleteFileFromServer = function(directoryName, fileName) {
 }
 
 var sendDirectory = function(directoryName, subDirectories) {
+  //var gitIgnore = "test 2.txt";
   fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
-    if (err) throw err;
+    if (err) {
+      $("#errors").html("Error: folder contains too many files or does not exist");
+      return;
+    }
     // fileName could be a file or a directory
     fileNames.forEach(function(fileName){
-      fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
+      fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
         var subDirs;
         if (subDirectories === "") {
           subDirs = fileName;
         } else {
           subDirs = subDirectories + '/' + fileName;
         }
-        // if error must be a directory
-        if (err) {
+        if (stats.isFile() && stats.size > 16777216) {
+          console.log("Error, " + fileName + " is over 16MB and can't be sent");
+        } else if (stats.isDirectory()) {
           sendDirectory(directoryName, subDirs);
         } else {
-          // send to server
-          sendFileToServer(directoryName, subDirs, data);
+          fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
+            // check if fileName is in gitIgnore
+            //if (fileName !== gitIgnore) {
+              // send to server
+              sendFileToServer(directoryName, subDirs, data);
+            //}
+
+          });
         }
       });
     });
@@ -77,15 +132,28 @@ $(function() {
         sendDirectory(directoryNames[0], "");
 
         watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
-          fs.readFile(directoryNames[0] + '/' + fileName, function(err, data) {
+          fs.stat(directoryNames[0] + '/' + fileName, function(err, stats) {
             if (err) {
-              // delete from server
+              // nonexistent so delete from server
               deleteFileFromServer(directoryNames[0], fileName);
+            } else if (stats.isFile() && stats.size > 16777216) {
+              console.log("Error, " + fileName + " is over 16MB and can't be sent");
             } else {
               // send to server
-              sendFileToServer(directoryNames[0], fileName, data);
+              if (stats.isFile()) {
+                fs.readFile(directoryNames[0] + '/' + fileName, function(err, data) {
+                  if (err) {
+                    console.log(err);
+                  }
+                  sendFileToServer(directoryNames[0], fileName, data);
+                });
+              } else {
+                sendDirectory(directoryNames[0], fileName);
+              }
+
             }
           });
+
         });
       }
     });
@@ -147,11 +215,20 @@ $(function() {
       fs.mkdir(directory, function(err) {
         // if file should be deleted, delete it
         if (msg.deleted) {
-          fs.unlink(connectedDirectory + '/' + msg.fileName, function(err) {
-            if (err) {
-              return console.log(err);
-            }
-          });
+          fs.stat(connectedDirectory + '/' + msg.fileName, function(err, stats) {
+          if (!stats) {
+            return;
+          }
+          if (stats.isFile()) {
+            fs.unlink(connectedDirectory + '/' + msg.fileName, function(err) {
+              if (err) {
+                return console.log(err);
+              }
+            });
+          } else {
+            rmdirAsync(connectedDirectory + '/' + msg.fileName);
+          }
+        });
         // otherwise, save the file
         } else {
           fs.writeFile(connectedDirectory + '/' + msg.fileName, toBuffer(msg.fileContents), function(err) {
