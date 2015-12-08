@@ -11,7 +11,7 @@ var connectedDirectory;
 var serverDirectory;
 var gitignore;
 
-// sets up a gitignore with a gitignore file if it exists in the fileNames array
+// sets up a gitignore with a .gitignore file if it exists in the fileNames array
 var setUpGitIgnore = function(directoryName, fileNames, callback) {
   var index = 0;
   fileNames.forEach(function(fileName) {
@@ -288,10 +288,10 @@ $(function() {
     }
   });
 
-  socket.on('folder does not exist', function() {
+  socket.on('send directory error', function() {
     connectedDirectory = null;
     serverDirectory = null;
-    ("#log").append("<div>Folder does not exit</div>");
+    ("#log").append("<div>Problem retrieving directory. Either folder does not exist, or the server is experiencing problems</div>");
   });
 
 
