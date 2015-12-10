@@ -1,8 +1,6 @@
 var fs = require('fs');
 var parser = require('gitignore-parser')
-var serverUrl = 'http://localhost:3000';
-var socket = io(serverUrl);
-
+var socket = require('../socket');
 var helpers = {};
 
 helpers.watcher = null;

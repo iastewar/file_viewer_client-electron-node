@@ -1,8 +1,7 @@
 var fs = require('fs');
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var serverUrl = 'http://localhost:3000';
-var socket = io(serverUrl);
+var socket = require('../socket');
 var helpers = require('./helpers');
 
 var events = {};
@@ -71,7 +70,7 @@ events.connectFolder = function() {
     if (!directoryNames) {
       return;
     } else {
-      serverFolder = $("#serverFolder").val();;
+      serverFolder = $("#serverFolder").val();
       if (serverFolder === "") {
         $("#log").append("<div>Please enter a server folder first</div>");
         return;
