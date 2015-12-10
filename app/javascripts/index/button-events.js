@@ -61,6 +61,7 @@ events.stopListening = function() {
     helpers.watcher = null;
     helpers.gitignore = null;
     helpers.sendDirectoryCount = 0;
+    socket.emit('delete folder');
     $("#log").append("<div>Stopped listening to folder</div>");
   }
 }

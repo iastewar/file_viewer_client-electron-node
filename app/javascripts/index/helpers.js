@@ -37,55 +37,58 @@ helpers.setUpGitIgnore = function(directoryName, fileNames, callback) {
 
 helpers.rmdirRec = function(directoryName, subDirectories, callback) {
 	fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
-
-		var index = 0;
-		fileNames.forEach(function(fileName) {
-			fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
-				if (err || !stats) {
-					console.log("trying to remove: " + directoryName + '/' + subDirectories + '/' + fileName);
-					fs.rmdir(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
-						console.log(err);
-					});
-				} else {
-					var subDirs;
-					if (subDirectories === "") {
-						subDirs = fileName;
-					} else {
-						subDirs = subDirectories + '/' + fileName;
-					}
-
-					if (stats.isDirectory()) {
-						helpers.rmdirRec(directoryName, subDirs, function() {
-							index++;
-							if (index === fileNames.length) {
-								fs.rmdir(directoryName + '/' + subDirectories, function(err) {
-									if (err)
-										console.log(err);
-									if (callback)
-										callback();
-								});
-							}
+		if (err) {
+			if (callback)
+				callback();
+		} else {
+			var index = 0;
+			fileNames.forEach(function(fileName) {
+				fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
+					if (err || !stats) {
+						console.log("trying to remove: " + directoryName + '/' + subDirectories + '/' + fileName);
+						fs.rmdir(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
+							console.log(err);
 						});
 					} else {
-						fs.unlink(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
-							if (err) {
-								console.log(err);
-							}
-							index++;
-	            if (index === fileNames.length) {
-	              fs.rmdir(directoryName + '/' + subDirectories, function(err) {
-									if (err)
-										console.log(err);
-									if (callback)
-										callback();
-								});
-	            }
-						});
-					}
-				}
+						var subDirs;
+						if (subDirectories === "") {
+							subDirs = fileName;
+						} else {
+							subDirs = subDirectories + '/' + fileName;
+						}
 
+						if (stats.isDirectory()) {
+							helpers.rmdirRec(directoryName, subDirs, function() {
+								index++;
+								if (index === fileNames.length) {
+									fs.rmdir(directoryName + '/' + subDirectories, function(err) {
+										if (err)
+											console.log(err);
+										if (callback)
+											callback();
+									});
+								}
+							});
+						} else {
+							fs.unlink(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
+								if (err) {
+									console.log(err);
+								}
+								index++;
+		            if (index === fileNames.length) {
+		              fs.rmdir(directoryName + '/' + subDirectories, function(err) {
+										if (err)
+											console.log(err);
+										if (callback)
+											callback();
+									});
+		            }
+							});
+						}
+					}
+				});
 			});
-		});
+		}
 	});
 }
 
