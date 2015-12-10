@@ -18,7 +18,7 @@ $(function() {
           dataType: "json",
           success: function(data, textStatus, xhr) {
             if (data.user) {
-              $('#log').append("<div>Logged in as " + data.user.email + "</div>");
+              $('#log').append("<div>Logged in as " + data.user.username + "</div>");
               socketFunctions.resetSocket(socket);
             } else {
               $('#log').append("<div>Login Failed</div>");
