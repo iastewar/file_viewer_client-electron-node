@@ -31,7 +31,7 @@ on.sendFile = function(msg) {
             }
           });
         } else {
-          helpers.rmdirAsync(helpers.connectedDirectory + '/' + msg.fileName);
+          helpers.rmdirRec(helpers.connectedDirectory + '/' + msg.fileName, "");
         }
       });
       // otherwise, save the file

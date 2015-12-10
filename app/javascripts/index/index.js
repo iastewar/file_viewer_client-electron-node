@@ -15,11 +15,15 @@ $(function() {
           url : formURL,
           type: "POST",
           data : postData,
-          success:function(data, textStatus, xhr) {
-            $('#log').append("<div>Logged In</div>")
-            //console.log("logged in");
-            //console.log(xhr.getAllResponseHeaders());
-            socketFunctions.resetSocket(socket);
+          dataType: "json",
+          success: function(data, textStatus, xhr) {
+            if (data.user) {
+              $('#log').append("<div>Logged in as " + data.user.email + "</div>");
+              socketFunctions.resetSocket(socket);
+            } else {
+              $('#log').append("<div>Login Failed</div>");
+            }
+
           },
           error: function(jqXHR, textStatus, errorThrown) {
               console.log("failed to send the login request");
@@ -49,5 +53,7 @@ $(function() {
 
   socket.on('send directory error', socketInputs.sendDirectoryError);
 
-
+  socket.on('log in', function() {
+    console.log("not logged in yet")
+  })
 });
