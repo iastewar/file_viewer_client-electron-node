@@ -134,7 +134,9 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
           if (stats.isFile() && stats.size > 16777216) {
             console.log("Error, " + fileName + " is over 16MB and can't be sent");
           } else if (stats.isDirectory()) {
-            helpers.sendDirectory(directoryName, subDirs);
+            if (fileName !== ".git") {
+              helpers.sendDirectory(directoryName, subDirs);
+            }
           } else {
             fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
               helpers.sendFileToServer(directoryName, subDirs, data);
