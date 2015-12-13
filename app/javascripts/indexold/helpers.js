@@ -3,10 +3,10 @@ var parser = require('gitignore-parser')
 var socket = require('../socket');
 var helpers = {};
 
-helpers.watcher = null;
-helpers.connectedDirectory = null;
-helpers.serverDirectory = null;
-helpers.gitignore = null;
+helpers.watchers = null;
+helpers.connectedDirectories = null;
+helpers.serverDirectories = null;
+helpers.gitignores = null;
 
 // sets up a gitignore with a .gitignore file if it exists in the fileNames array
 helpers.setUpGitIgnore = function(directoryName, fileNames, callback) {
@@ -14,7 +14,7 @@ helpers.setUpGitIgnore = function(directoryName, fileNames, callback) {
   fileNames.forEach(function(fileName) {
     if (fileName === ".gitignore") {
       fs.readFile(directoryName + "/" + fileName, 'utf8', function(err, data) {
-        helpers.gitignore = parser.compile(data);
+        helpers.gitignores = parser.compile(data);
         console.log("gitignore created");
         index++;
         if (index === fileNames.length) {
@@ -127,7 +127,7 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
           } else {
             subDirs = subDirectories + '/' + fileName;
           }
-          if (helpers.gitignore && helpers.gitignore.denies(subDirs)) {
+          if (helpers.gitignores && helpers.gitignores.denies(subDirs)) {
             console.log("denied " + subDirs);
             return;
           }
@@ -146,7 +146,7 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
       });
     }
 
-    if (!helpers.gitignore && helpers.sendDirectoryCount === 1) {
+    if (!helpers.gitignores && helpers.sendDirectoryCount === 1) {
       helpers.setUpGitIgnore(directoryName, fileNames, sendTheFiles);
     } else {
       sendTheFiles();

@@ -4,52 +4,73 @@
     <meta charset="utf-8">
     <title>File Viewer</title>
 
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/cyborg/bootstrap.min.css"/> -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/index.css">
+
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src='../../dependencies/react.js'></script>
+    <script src='../../dependencies/react-dom.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>require('../javascripts/index/index.js')</script>
+
   </head>
   <body>
-    <div>
-      <form id='login' action="http://localhost:3000/users/login" method="post">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="email" class="form-control" name="username">
+    <div class="container-fluid" id="container">
+      <div class="row">
+        <div class="col-md-3 col-md-offset-5" id="signinMessage">
+          Not Signed In
+        </div>
+        <div class="col-md-4">
+          <div class="dropdown pull-right">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              Log In / Sign Up
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li><a id="login" href="javascript:void(0);">Log In</a></li>
+              <li><a id="signup" href="javascript:void(0);">Sign Up</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <!-- Nav tabs -->
+          <ul class="nav nav-pills nav-stacked" role="tablist">
+            <li role="presentation" class="active"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View</a></li>
+            <li role="presentation"><a href="#connect" aria-controls="connect" role="tab" data-toggle="tab">Connect</a></li>
+            <li role="presentation"><a href="#broadcast" aria-controls="broadcast" role="tab" data-toggle="tab">Broadcast</a></li>
+          </ul>
+        </div>
+        <div class="col-md-9">
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="view">...</div>
+            <div role="tabpanel" class="tab-pane" id="connect">
+              <div row>
+                <div class="col-md-9 col-md-offset-1">
+                  <h2>Connected Repositories</h2>
+                </div>
+                <div class="col-md-1" id="connect-btn">
+                  <button class="btn btn-primary">Connect</button>
+                </div>
+              </div>
+              <div id="connectedRepos"></div>
             </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" class="form-control" name="password">
-            </div>
-        </form>
-        <button id="submitlogin" class="btn btn-warning btn-lg">Login</button>
+            <div role="tabpanel" class="tab-pane" id="broadcast">...</div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
 
-    <div>
-      <p>
-        Listens to chosen local folder. All files in folder are sent to the server
-        and any file changes will automatically be sent unless the 'Stop Listening to Folder'
-        button is pressed.
-      </p>
-      <button id="listenFolder">Select Folder to Listen to</button>
-      <button id="stopListening">Stop Listening to Folder</button>
-    </div>
 
-    <div>
-      <p>
-        Connects to a chosen folder on the server and stores all contents to the
-        local folder specifed. When connected, any change the owner of the folder
-        makes to files will automatically be stored to the chosen folder.
-      </p>
-      <input id="serverFolder" type="text" placeholder="Choose a Server Folder"/>
-      <button id="connectFolder">Connect to Server Folder</button>
-      <button id="disconnectFolder">Disconnect from Server Folder</button>
-    </div>
-
-    <div id="log"></div>
-
-    <div id="errors"></div>
-
-    <div id="file" style="white-space: pre-wrap;"></div>
-
+    <script type="text/babel" src='../javascripts/index/connect-repo.js'></script>
 
   </body>
 </html>

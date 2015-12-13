@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>File Viewer</title>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+    <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/cyborg/bootstrap.min.css"/> -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src='../../dependencies/react.js'></script>
+    <script src='../../dependencies/react-dom.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script>require('../javascripts/login/login.js')</script>
+
+  </head>
+  <body>
+  <div class="container">
+
+    <div class="col-sm-6 col-sm-offset-3">
+
+        <h1><span class="fa fa-sign-in"></span> Login</h1>
+
+        <!-- show any messages that come back with authentication -->
+            <div id="messages"></div>
+
+        <!-- LOGIN FORM -->
+        <div>
+          <form id='login' action="http://localhost:3000/users/login" method="post">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="email" class="form-control" name="username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" name="password">
+                </div>
+            </form>
+            <button id="submitlogin" class="btn btn-warning btn-lg">Login</button>
+            <button id="closelogin" class="btn btn-danger btn-lg">Cancel</button>
+        </div>
+
+    </div>
+
+  </div>
+  </body>
+</html>

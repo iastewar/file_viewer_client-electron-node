@@ -6,6 +6,7 @@
     "start": "electron ."
   },
   "devDependencies": {
+    "babel-core": "^6.3.17",
     "electron-prebuilt": "^0.35.2"
   },
   "dependencies": {

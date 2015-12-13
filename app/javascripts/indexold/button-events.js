@@ -7,10 +7,10 @@ var helpers = require('./helpers');
 var events = {};
 
 events.listenFolder = function() {
-  if (helpers.watcher) {
-    helpers.watcher.close();
-    helpers.watcher = null;
-    helpers.gitignore = null;
+  if (helpers.watchers) {
+    helpers.watchers.close();
+    helpers.watchers = null;
+    helpers.gitignores = null;
     helpers.sendDirectoryCount = 0;
     $("#log").append("<div>Stopped listening to folder</div>");
   }
@@ -23,9 +23,9 @@ events.listenFolder = function() {
 
       helpers.sendDirectory(directoryNames[0], "");
 
-      helpers.watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
+      helpers.watchers = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
         fs.stat(directoryNames[0] + '/' + fileName, function(err, stats) {
-          if (helpers.gitignore && helpers.gitignore.denies(fileName)) {
+          if (helpers.gitignores && helpers.gitignores.denies(fileName)) {
             console.log("denied " + fileName);
             return;
           }
@@ -56,10 +56,10 @@ events.listenFolder = function() {
 }
 
 events.stopListening = function() {
-  if (helpers.watcher) {
-    helpers.watcher.close();
-    helpers.watcher = null;
-    helpers.gitignore = null;
+  if (helpers.watchers) {
+    helpers.watchers.close();
+    helpers.watchers = null;
+    helpers.gitignores = null;
     helpers.sendDirectoryCount = 0;
     socket.emit('delete folder');
     $("#log").append("<div>Stopped listening to folder</div>");
@@ -77,8 +77,8 @@ events.connectFolder = function() {
         return;
       }
 
-      helpers.connectedDirectory = directoryNames[0];
-      helpers.serverDirectory = serverFolder;
+      helpers.connectedDirectories = directoryNames[0];
+      helpers.serverDirectories = serverFolder;
 
       socket.emit('connect folder', serverFolder);
 
@@ -89,11 +89,11 @@ events.connectFolder = function() {
 }
 
 events.disconnectFolder = function() {
-  if (helpers.connectedDirectory && helpers.serverDirectory) {
-    socket.emit('disconnect folder', helpers.serverDirectory);
-    $("#log").append("<div>Disconnected from: " + helpers.serverDirectory +  ", stopped storing to " + helpers.connectedDirectory + "</div>");
-    helpers.connectedDirectory = null;
-    helpers.serverDirectory = null;
+  if (helpers.connectedDirectories && helpers.serverDirectories) {
+    socket.emit('disconnect folder', helpers.serverDirectories);
+    $("#log").append("<div>Disconnected from: " + helpers.serverDirectories +  ", stopped storing to " + helpers.connectedDirectories + "</div>");
+    helpers.connectedDirectories = null;
+    helpers.serverDirectories = null;
   }
 }
 
