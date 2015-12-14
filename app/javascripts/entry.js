@@ -1,3 +1,5 @@
+require('./index/view-repo');
+
 // var Cont = React.createClass({
 //         getInitialState: function() {
 //           return {value: ""};

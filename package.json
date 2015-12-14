@@ -12,7 +12,8 @@
     "electron-packager": "^5.1.1",
     "electron-prebuilt": "^0.35.2",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.0"
+    "webpack-dev-server": "^1.14.0",
+    "webpack-target-electron-renderer": "^0.2.0"
   },
   "dependencies": {
     "electron-cookies": "^1.1.0",

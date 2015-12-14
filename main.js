@@ -10,6 +10,7 @@ var mainWindow = null;
 var loginWindow = null;
 var signupWindow = null;
 var connectWindow = null;
+var viewWindow = null;
 
 // app.on('window-all-closed', function() {
 //   // On OS X it is common for applications and their menu bar
@@ -35,6 +36,7 @@ app.on('ready', function() {
       loginWindow = null;
       signupWindow = null;
       connectWindow = null;
+      viewWindow = null;
       app.quit();
     });
 });
@@ -91,10 +93,37 @@ ipc.on('close-connect-window', function () {
     }
 });
 
+ipc.on('open-view-window', function () {
+    if (viewWindow) {
+        return;
+    }
+
+    viewWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600
+    });
+
+    viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
+
+    viewWindow.on('closed', function () {
+        viewWindow = null;
+    });
+});
+
+ipc.on('close-view-window', function () {
+    if (viewWindow) {
+        viewWindow.close();
+    }
+});
+
 ipc.on('connecting', function(event, args) {
   mainWindow.webContents.send('connecting', args);
 });
 
+ipc.on('viewing', function(event, args) {
+  mainWindow.webContents.send('viewing', args);
+});
 
 ipc.on('loggedin', function(event, username) {
   mainWindow.webContents.send('loggedin', username);

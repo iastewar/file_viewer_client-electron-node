@@ -1,8 +1,10 @@
 var webpack = require('webpack');
-module.exports = {
+var webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
+options = {
   entry: {
   app: ['webpack/hot/dev-server', './app/javascripts/entry.js'],
 },
+target: "atom",
 output: {
   path: './app/built',
   filename: 'bundle.js',
@@ -18,6 +20,10 @@ module: {
  ]
 },
  plugins: [
-   new webpack.HotModuleReplacementPlugin(), new webpack.IgnorePlugin(new RegExp("^(fs|ipc|remote)$"))
+   new webpack.HotModuleReplacementPlugin()
  ]
 }
+
+options.target = webpackTargetElectronRenderer(options)
+
+module.exports = options;

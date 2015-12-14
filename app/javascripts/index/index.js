@@ -16,12 +16,12 @@ $(function() {
     socketFunctions.resetSocket(socket);
     $("#signinMessage").html("Not Signed In");
     loginStatus.loggedin = false;
+    $("#broadcastingRepos").html("");
 
     $(".loginsignup").html(
 
       "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>" +
-        "Log In / Sign Up" +
-        "<span class='caret'></span>" +
+        "Log In / Sign Up <span class='caret'></span>" +
       "</button>" +
       "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>" +
         "<li><a id='login' href='javascript:void(0);'>Log In</a></li>" +

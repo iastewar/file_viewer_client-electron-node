@@ -101,13 +101,15 @@ ipc.on('connecting', function(event, args) {
 });
 
 socket.on('connected', function(msg) {
-  console.log(msg);
-  helpers.connectedRepos[msg] = connecting[msg];
-  arr = msg.split("/");
+  if (connecting[msg]) {
+    console.log(msg);
+    helpers.connectedRepos[msg] = connecting[msg];
+    arr = msg.split("/");
 
-  addRow(arr[0], arr[1], connecting[msg]);
+    addRow(arr[0], arr[1], connecting[msg]);
 
-  delete connecting[msg];
+    delete connecting[msg];
+  }
 });
 
 socket.on('send file', sendFile);
