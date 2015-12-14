@@ -121,11 +121,11 @@ var FileView = React.createClass({
 var fileTree = {};
 
 var addToFileTree = function(fileTree, fileNameArray, length, index, fileContents) {
+  fileTree.name = fileNameArray[index];
   if (index === length - 1) {
     fileTree.fileContents = fileContents;
     return;
   }
-  fileTree.name = fileNameArray[index];
   if (!fileTree.childNodes) {
     fileTree.childNodes = [{name: fileNameArray[index + 1]}];
     addToFileTree(fileTree.childNodes[0], fileNameArray, length, index + 1, fileContents);
@@ -143,7 +143,27 @@ var addToFileTree = function(fileTree, fileNameArray, length, index, fileContent
       addToFileTree(fileTree.childNodes[fileTree.childNodes.length - 1], fileNameArray, length, index + 1, fileContents);
     }
   }
+}
 
+var removeFromFileTree = function(fileTree, fileNameArray, length, index) {
+  if (fileTree.name !== fileNameArray[index]) {
+    return false;
+  }
+  var flag = false;
+  var childrenLength = fileTree.childNodes.length;
+  for (var i = 0; i < childrenLength; i++) {
+    if (fileNameArray[index + 1] === fileTree.childNodes[i].name) {
+      if (index === length - 2) {
+        fileTree.childNodes.splice(i, 1);
+        return true;
+      }
+      removeFromFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1);
+      flag = true;
+    }
+  }
+  if (!flag) {
+    return false;
+  }
 }
 
 ab2str = function(buf) {
@@ -155,13 +175,9 @@ var sendDirectoryError = function(msg) {
 }
 
 $(function(){
-
-
   $("#view-btn").on("click", function() {
     ipc.send('open-view-window');
   });
-
-
 });
 
 
@@ -170,41 +186,13 @@ socket.on('send file', function(msg){
   if (msg.owner + "/" + fileNameArray[0] !== serverFolder) {
     return;
   }
-
   if (msg.deleted) {
-    //delete files[msg.fileName];
+    removeFromFileTree(fileTree, fileNameArray, fileNameArray.length, 0);
   } else {
-    //files[msg.fileName] = ab2str(msg.fileContents);
-
-    //console.log(msg.fileName);
-
     addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, ab2str(msg.fileContents));
-
-    //console.log(fileTree);
-
     ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
-
-
    }
-  //ReactDOM.render(<TreeNode node={fileTree} />, document.getElementById('container'));
-  //$('#file').append("<div><h2>" + msg.fileName + "</h2>" + ab2str(msg.fileContents) + "</div>");
 });
-
-
-
-// socket.on('send file', function(msg){
-//   if (msg.deleted) {
-//     delete files[msg.fileName];
-//   } else {
-//     files[msg.fileName] = ab2str(msg.fileContents);
-//   }
-//   ReactDOM.render(<FileView files={files} />, document.getElementById('container'));
-//   //$('#file').append("<div><h2>" + msg.fileName + "</h2>" + ab2str(msg.fileContents) + "</div>");
-// });
-
-socket.on('send directory error', function() {
-  $('#file').text("Folder does not exist");
-})
 
 ipc.on('viewing', function(event, args) {
   console.log("trying to view " + args.owner + "/" + args.name);
