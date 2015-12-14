@@ -45,6 +45,30 @@ ipc.on('close-main-window', function () {
     app.quit();
 });
 
+ipc.on('open-signup-window', function () {
+    if (signupWindow) {
+        return;
+    }
+
+    signupWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600
+    });
+
+    signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+
+    signupWindow.on('closed', function () {
+        signupWindow = null;
+    });
+});
+
+ipc.on('close-signup-window', function () {
+    if (signupWindow) {
+        signupWindow.close();
+    }
+});
+
 ipc.on('open-login-window', function () {
     if (loginWindow) {
         return;

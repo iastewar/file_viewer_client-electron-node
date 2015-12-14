@@ -11,6 +11,11 @@ $(function() {
     event.preventDefault();
   })
 
+  $(".loginsignup").on("click", "#signup", function() {
+    ipc.send('open-signup-window');
+    event.preventDefault();
+  })
+
   $(".loginsignup").on("click", "#logout", function() {
     $.get(serverUrl + "/users/logout");
     socketFunctions.resetSocket(socket);
