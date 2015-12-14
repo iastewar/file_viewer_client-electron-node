@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Log In</title>
+    <title>Connect to Remote Repository</title>
 
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
     <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/cyborg/bootstrap.min.css"/> -->
@@ -11,7 +11,7 @@
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-    <script>require('../javascripts/login/login.js')</script>
+    <script>require('../javascripts/connect/connect.js')</script>
 
   </head>
   <body>
@@ -19,25 +19,25 @@
 
     <div class="col-sm-6 col-sm-offset-3">
 
-        <h1><span class="fa fa-sign-in"></span> Login</h1>
+        <h1><span class="fa fa-folder-open-o"></span> Connect</h1>
 
-        <!-- show any messages that come back with authentication -->
+        <!-- show any messages that come back with connecting -->
             <div id="messages"></div>
 
-        <!-- login form -->
+        <!-- connect form -->
         <div>
-          <form id='login' action="http://localhost:3000/users/login" method="post">
+          <form id='connect'>
                 <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" class="form-control" name="username">
+                    <label>Owner</label>
+                    <input type="text" class="form-control" name="owner">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" name="password">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name">
                 </div>
             </form>
-            <button id="submitlogin" class="btn btn-warning btn-lg">Login</button>
-            <button id="closelogin" class="btn btn-danger btn-lg">Cancel</button>
+            <button id="submitconnect" class="btn btn-warning btn-lg">Connect</button>
+            <button id="closeconnect" class="btn btn-danger btn-lg">Cancel</button>
         </div>
 
     </div>

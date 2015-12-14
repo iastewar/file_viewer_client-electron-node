@@ -9,6 +9,7 @@ require('crash-reporter').start();
 var mainWindow = null;
 var loginWindow = null;
 var signupWindow = null;
+var connectWindow = null;
 
 // app.on('window-all-closed', function() {
 //   // On OS X it is common for applications and their menu bar
@@ -33,6 +34,8 @@ app.on('ready', function() {
       mainWindow = null;
       loginWindow = null;
       signupWindow = null;
+      connectWindow = null;
+      app.quit();
     });
 });
 
@@ -46,6 +49,7 @@ ipc.on('open-login-window', function () {
     }
 
     loginWindow = new BrowserWindow({
+        //frame: false,
         height: 400,
         width: 600
     });
@@ -63,7 +67,35 @@ ipc.on('close-login-window', function () {
     }
 });
 
+ipc.on('open-connect-window', function () {
+    if (connectWindow) {
+        return;
+    }
+
+    connectWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600
+    });
+
+    connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
+
+    connectWindow.on('closed', function () {
+        connectWindow = null;
+    });
+});
+
+ipc.on('close-connect-window', function () {
+    if (connectWindow) {
+        connectWindow.close();
+    }
+});
+
+ipc.on('connecting', function(event, args) {
+  mainWindow.webContents.send('connecting', args);
+});
+
 
 ipc.on('loggedin', function(event, username) {
   mainWindow.webContents.send('loggedin', username);
-})
+});

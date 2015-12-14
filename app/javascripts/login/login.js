@@ -1,5 +1,3 @@
-var socket = require('../socket');
-var socketFunctions = require('../socket-functions')
 var ipc = require('electron').ipcRenderer;
 var remote = require('remote');
 
@@ -23,7 +21,6 @@ $(function() {
             if (data.user) {
               ipc.send('loggedin', data.user.username);
               ipc.send('close-login-window');
-              socketFunctions.resetSocket(socket);
             } else {
               $("#messages").html("Invalid username or password").addClass("alert alert-danger");
             }
@@ -37,8 +34,14 @@ $(function() {
   });
 
 
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      $("#login").submit();
+    }
+  });
+
   $("#submitlogin").on("click", function() {
     $("#login").submit();
     event.preventDefault();
-  })
+  });
 });

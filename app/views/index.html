@@ -11,11 +11,10 @@
 
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src='../../dependencies/react.js'></script>
-    <script src='../../dependencies/react-dom.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>require('../javascripts/index/index.js')</script>
+    <script>require('../javascripts/index/connect-repo.js')</script>
+    <script>require('../javascripts/index/broadcast-repo.js')</script>
 
   </head>
   <body>
@@ -25,7 +24,7 @@
           Not Signed In
         </div>
         <div class="col-md-4">
-          <div class="dropdown pull-right">
+          <div class="dropdown pull-right loginsignup">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               Log In / Sign Up
               <span class="caret"></span>
@@ -55,13 +54,23 @@
                 <div class="col-md-9 col-md-offset-1">
                   <h2>Connected Repositories</h2>
                 </div>
-                <div class="col-md-1" id="connect-btn">
-                  <button class="btn btn-primary">Connect</button>
+                <div class="col-md-1">
+                  <button id="connect-btn" class="btn btn-primary">Connect</button>
                 </div>
               </div>
               <div id="connectedRepos"></div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="broadcast">...</div>
+            <div role="tabpanel" class="tab-pane" id="broadcast">
+              <div row>
+                <div class="col-md-9 col-md-offset-1">
+                  <h2>Broadcasting Repositories</h2>
+                </div>
+                <div class="col-md-1">
+                  <button id="broadcast-btn" class="btn btn-primary">Broadcast</button>
+                </div>
+              </div>
+              <div id="broadcastingRepos"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -69,8 +78,8 @@
 
     </div>
 
-
-    <script type="text/babel" src='../javascripts/index/connect-repo.js'></script>
+    <!-- <script src="http://localhost:8080/webpack-dev-server.js"></script>
+    <script src="http://localhost:8080/built/bundle.js"></script> -->
 
   </body>
 </html>
