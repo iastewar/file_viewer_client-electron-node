@@ -2,6 +2,15 @@ body {
   font-family: 'Ubuntu', sans-serif !important;
 }
 
+.tab {
+  width: 14%;
+}
+
+.tab a {
+  margin: auto;
+  text-align: center;
+}
+
 .main-header {
   margin: auto;
   text-align: center;

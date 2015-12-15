@@ -6,28 +6,27 @@ var loginStatus = require('../login-status');
 var serverUrl = 'http://localhost:3000';
 
 $(function() {
-  var tabs = {"View": 0, "Connect": 1, "Broadcast": 2};
 
+  // toggle tabs with right and left arrows
   $(document).on("keyup", function() {
     if (event.keyCode === 37) {
       var openTab = $(".active").find("a").html();
-      var tabNumber = tabs[openTab];
-      switch(tabNumber) {
-        case 0:
+      switch(openTab) {
+        case "View":
           $("#view-tab").removeClass("active");
           $("#view").removeClass("active");
           $("#broadcast-tab").addClass("active");
           $("#broadcast").addClass("active");
           break;
 
-        case 1:
+        case "Connect":
           $("#connect-tab").removeClass("active");
           $("#connect").removeClass("active");
           $("#view-tab").addClass("active");
           $("#view").addClass("active");
           break;
 
-        case 2:
+        case "Broadcast":
           $("#broadcast-tab").removeClass("active");
           $("#broadcast").removeClass("active");
           $("#connect-tab").addClass("active");
@@ -36,23 +35,22 @@ $(function() {
       }
     } else if (event.keyCode === 39) {
       var openTab = $(".active").find("a").html();
-      var tabNumber = tabs[openTab];
-      switch(tabNumber) {
-        case 0:
+      switch(openTab) {
+        case "View":
           $("#view-tab").removeClass("active");
           $("#view").removeClass("active");
           $("#connect-tab").addClass("active");
           $("#connect").addClass("active");
           break;
 
-        case 1:
+        case "Connect":
           $("#connect-tab").removeClass("active");
           $("#connect").removeClass("active");
           $("#broadcast-tab").addClass("active");
           $("#broadcast").addClass("active");
           break;
 
-        case 2:
+        case "Broadcast":
           $("#broadcast-tab").removeClass("active");
           $("#broadcast").removeClass("active");
           $("#view-tab").addClass("active");
