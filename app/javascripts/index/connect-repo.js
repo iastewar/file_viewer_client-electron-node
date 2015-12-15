@@ -68,7 +68,7 @@ var addRow = function(owner, name, storingTo) {
     "<td class='connectedName'>" + name + "</td>" +
     "<td class='connectedOwner'>" + owner + "</td>" +
     "<td class='connectedStoringTo'>" + storingTo + "</td>" +
-    "<td><div class='btn btn-danger stopConnecting'>Stop</div></td>" +
+    "<td><div class='btn btn-danger stopConnecting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
   "</tr>"
 
   );

@@ -11,7 +11,7 @@ var addRow = function(directoryName) {
   $("#broadcastingRepos").append(
   "<tr>" +
     "<td class='broadcastName'>" + directoryName + "</td>" +
-    "<td><div class='btn btn-danger stopBroadcasting'>Stop</div></td>" +
+    "<td><div class='btn btn-danger stopBroadcasting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
   "</tr>"
 
   );
