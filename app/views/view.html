@@ -23,19 +23,19 @@
         <h1><span class="fa fa-folder-open-o"></span> View</h1>
 
         <!-- show any messages that come back with viewing -->
-            <div id="messages" class="error-message alert alert-danger" style="display: none"></div>
+        <div id="messages" class="error-message alert alert-danger" style="display: none"></div>
 
         <!-- view form -->
         <div>
           <form id='view'>
-                <div class="form-group">
-                    <label>Owner</label>
-                    <input type="text" class="form-control" name="owner">
-                </div>
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="name">
-                </div>
+            <div class="form-group">
+                <label>Owner</label>
+                <input type="text" class="form-control" name="owner" autofocus="autofocus">
+            </div>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name">
+            </div>
             </form>
             <button id="submitview" class="btn btn-warning btn-lg">View</button>
             <button id="closeview" class="btn btn-danger btn-lg">Cancel</button>

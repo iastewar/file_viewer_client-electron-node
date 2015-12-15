@@ -64,15 +64,24 @@ var broadcastRepo = function() {
   });
 }
 
+var broadcastBtn = function() {
+  if (loginStatus.loggedin) {
+    broadcastRepo();
+  } else {
+    ipc.send('open-login-window');
+  }
+}
 
 $(function() {
-  $("#broadcast-btn").on("click", function() {
-    if (loginStatus.loggedin) {
-      broadcastRepo();
-    } else {
-      ipc.send('open-login-window');
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      if ($(".active").find("a").html() === "Broadcast") {
+        broadcastBtn();
+      }
     }
   });
+
+  $("#broadcast-btn").on("click", broadcastBtn);
 
   $("#broadcastingRepos").on("click", ".stopBroadcasting", function() {
     var broadcastName = $(this).parent().parent().find(".broadcastName").html()

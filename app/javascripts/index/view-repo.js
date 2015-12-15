@@ -179,7 +179,15 @@ var sendDirectoryError = function(msg) {
   });
 }
 
-$(function(){
+$(function() {
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      if ($(".active").find("a").html() === "View") {
+        ipc.send('open-view-window');
+      }
+    }
+  });
+
   $("#view-btn").on("click", function() {
     ipc.send('open-view-window');
   });

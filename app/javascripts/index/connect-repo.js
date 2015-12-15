@@ -75,6 +75,14 @@ var addRow = function(owner, name, storingTo) {
 }
 
 $(function() {
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      if ($(".active").find("a").html() === "Connect") {
+        ipc.send('open-connect-window');
+      }
+    }
+  });
+
   $("#connect-btn").on("click", function() {
     ipc.send('open-connect-window');
   });
