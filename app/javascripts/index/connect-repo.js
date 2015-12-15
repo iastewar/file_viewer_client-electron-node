@@ -63,12 +63,12 @@ var sendDirectoryError = function(msg) {
 
 var addRow = function(owner, name, storingTo) {
   $("#connectedRepos").append(
-  "<div class='row'>" +
-    "<div class='col-md-3 connectedName'>" + name + "</div>" +
-    "<div class='col-md-3 connectedOwner'>" + owner + "</div>" +
-    "<div class='col-md-3 connectedStoringTo'>" + storingTo + "</div>" +
-    "<button class='col-md-1 stopConnecting btn btn-danger'>Stop</button>" +
-  "</div>"
+  "<tr>" +
+    "<td class='connectedName'>" + name + "</td>" +
+    "<td class='connectedOwner'>" + owner + "</td>" +
+    "<td class='connectedStoringTo'>" + storingTo + "</td>" +
+    "<td><div class='btn btn-danger stopConnecting'>Stop</div></td>" +
+  "</tr>"
 
   );
 }
@@ -79,14 +79,14 @@ $(function() {
   });
 
   $("#connectedRepos").on("click", ".stopConnecting", function() {
-    var connectedName = $(this).parent().find(".connectedName").html();
-    var connectedOwner = $(this).parent().find(".connectedOwner").html()
+    var connectedName = $(this).parent().parent().find(".connectedName").html();
+    var connectedOwner = $(this).parent().parent().find(".connectedOwner").html()
 
     delete helpers.connectedRepos[connectedOwner + "/" + connectedName];
 
     socket.emit('disconnect folder', connectedOwner + "/" + connectedName);
 
-    $(this).parent().remove();
+    $(this).parent().parent().remove();
   })
 });
 

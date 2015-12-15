@@ -9,10 +9,10 @@ var loginStatus = require('../login-status');
 
 var addRow = function(directoryName) {
   $("#broadcastingRepos").append(
-  "<div class='row'>" +
-    "<div class='col-md-9 broadcastName'>" + directoryName + "</div>" +
-    "<button class='col-md-1 stopBroadcasting btn btn-danger'>Stop</button>" +
-  "</div>"
+  "<tr>" +
+    "<td class='broadcastName'>" + directoryName + "</td>" +
+    "<td><div class='btn btn-danger stopBroadcasting'>Stop</div></td>" +
+  "</tr>"
 
   );
 }
@@ -75,7 +75,7 @@ $(function() {
   });
 
   $("#broadcastingRepos").on("click", ".stopBroadcasting", function() {
-    var broadcastName = $(this).parent().find(".broadcastName").html()
+    var broadcastName = $(this).parent().parent().find(".broadcastName").html()
 
     if (helpers.broadcastingRepos[broadcastName]) {
       if (helpers.broadcastingRepos[broadcastName].watcher) {
@@ -90,6 +90,6 @@ $(function() {
 
     socket.emit('delete folder', arr[arr.length - 1]);
 
-    $(this).parent().remove();
+    $(this).parent().parent().remove();
   })
 })

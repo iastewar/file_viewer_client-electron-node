@@ -39,14 +39,17 @@ $(function() {
 
   ipc.on('loggedin', function(event, username) {
     socketFunctions.resetSocket(socket);
-    $("#signinMessage").html("Signed in as " + username);
+    // $("#signinMessage").html("Signed in as " + username);
     loginStatus.loggedin = true;
 
     $(".loginsignup").html(
 
-      "<button id='logout' class='btn btn-default'>" +
-        "Log Out" +
-      "</button>"
+      "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>" +
+        username + " <span class='caret'></span>" +
+      "</button>" +
+      "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>" +
+        "<li><a id='logout' href='javascript:void(0);'>Log Out</a></li>" +
+      "</ul>"
 
     );
   });

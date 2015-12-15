@@ -24,9 +24,15 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3 col-md-offset-5" id="signinMessage">
-          Not Signed In
+        <div class="col-md-8">
+          <!-- Nav tabs -->
+          <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View</a></li>
+            <li role="presentation"><a href="#connect" aria-controls="connect" role="tab" data-toggle="tab">Connect</a></li>
+            <li role="presentation"><a href="#broadcast" aria-controls="broadcast" role="tab" data-toggle="tab">Broadcast</a></li>
+          </ul>
         </div>
+
         <div class="col-md-4">
           <div class="dropdown pull-right loginsignup">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -38,54 +44,66 @@
             </ul>
           </div>
         </div>
+
       </div>
-      <div class="row">
-        <div class="col-md-3">
-          <!-- Nav tabs -->
-          <ul class="nav nav-pills nav-stacked" role="tablist">
-            <li role="presentation" class="active"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View</a></li>
-            <li role="presentation"><a href="#connect" aria-controls="connect" role="tab" data-toggle="tab">Connect</a></li>
-            <li role="presentation"><a href="#broadcast" aria-controls="broadcast" role="tab" data-toggle="tab">Broadcast</a></li>
-          </ul>
-        </div>
-        <div class="col-md-9">
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="view">
-              <button id="view-btn" class="btn btn-primary">View</button>
-
-              <h1 class="page-header" id="view-header">View a Repository</h1>
-
-              <div id="viewingRepos"></div>
-
-            </div>
 
 
-            <div role="tabpanel" class="tab-pane" id="connect">
-              <div row>
-                <div class="col-md-9 col-md-offset-1">
-                  <h1 class="page-header">Connected Repositories</h1>
-                </div>
-                <div class="col-md-1">
-                  <button id="connect-btn" class="btn btn-primary">Connect</button>
-                </div>
-              </div>
-              <div id="connectedRepos"></div>
-            </div>
-
-
-            <div role="tabpanel" class="tab-pane" id="broadcast">
-              <div row>
-                <div class="col-md-9 col-md-offset-1">
-                  <h1 class="page-header">Broadcasting Repositories</h1>
-                </div>
-                <div class="col-md-1">
-                  <button id="broadcast-btn" class="btn btn-primary">Broadcast</button>
-                </div>
-              </div>
-              <div id="broadcastingRepos"></div>
-            </div>
+      <!-- Tab panes -->
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="view">
+          <div class="main-header">
+            <h1 id="view-header">View a Repository</h1>
+            <button id="view-btn" class="btn btn-primary main-btn">View</button>
           </div>
+          <div id="viewingRepos"></div>
+        </div>
+
+
+        <div role="tabpanel" class="tab-pane" id="connect">
+          <div class="main-header">
+            <h1>Connected Repositories</h1>
+            <button id="connect-btn" class="btn btn-primary main-btn">Connect</button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th width="25%">Name</th>
+                <th width="25%">Owner</th>
+                <th width="25%">Storing To</th>
+                <th width="25%">Stop Connecting?</th>
+              </tr>
+            </thead>
+
+            <tbody id="connectedRepos">
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+        <div role="tabpanel" class="tab-pane" id="broadcast">
+          <div class="main-header">
+            <h1>Broadcasting Repositories</h1>
+            <button id="broadcast-btn" class="btn btn-primary main-btn">Broadcast</button>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th width="75%">Name</th>
+                <th width="25%">Stop Broadcasting?</th>
+              </tr>
+            </thead>
+
+            <tbody id="broadcastingRepos">
+
+            </tbody>
+
+          </table>
+
         </div>
       </div>
 
