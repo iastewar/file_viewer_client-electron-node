@@ -19,9 +19,9 @@ var submitConnect = function() {
   var owner = $("input[name='owner']").val();
   var name = $("input[name='name']").val();
   if (owner === "") {
-    $("#messages").html("Enter an owner").addClass("alert alert-danger");
+    $("#messages").html("Enter an owner").show();
   } else if (name === "") {
-    $("#messages").html("Enter a name").addClass("alert alert-danger");
+    $("#messages").html("Enter a name").show();
   } else {
     connectFolder(owner, name);
   }

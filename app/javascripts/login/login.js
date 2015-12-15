@@ -22,7 +22,7 @@ $(function() {
               ipc.send('loggedin', data.user.username);
               ipc.send('close-login-window');
             } else {
-              $("#messages").html("Invalid username or password").addClass("alert alert-danger");
+              $("#messages").html("Invalid username or password").show();
             }
 
           },

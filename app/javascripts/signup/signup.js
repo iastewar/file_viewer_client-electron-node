@@ -22,7 +22,7 @@ $(function() {
               ipc.send('loggedin', data.user.username);
               ipc.send('close-signup-window');
             } else {
-              $("#messages").html("Username already taken").addClass("alert alert-danger");
+              $("#messages").html("Username already taken or a field is blank").show();
             }
 
           },

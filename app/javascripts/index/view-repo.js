@@ -103,8 +103,8 @@ var FileView = React.createClass({
   },
   render: function() {
     return <div className="row">
-            <div id="fileTree" className="col-md-3"><TreeNode node={this.props.node} notifyParent={this.swapView}/></div>
-            <div id="fileContents" className="col-md-9">
+            <div id="fileTree" className="col-md-3 col-md-offset-1"><TreeNode node={this.props.node} notifyParent={this.swapView}/></div>
+            <div id="fileContents" className="col-md-8">
               <div className="panel panel-default">
                 <div className="panel-heading">
                   <h3 className="panel-title">{this.state.fileName}</h3>
@@ -171,7 +171,13 @@ ab2str = function(buf) {
 }
 
 var sendDirectoryError = function(msg) {
-  console.log("Problem retrieving directory " + msg + ". Either folder does not exist, or the server is experiencing problems")
+  $("#view-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems");
+  $("#view-messages").fadeIn(1000, function() {
+    setTimeout(function(){
+      $("#view-messages").fadeOut(1000);
+    }, 3000);
+  })
+
 }
 
 $(function(){

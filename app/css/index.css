@@ -1,3 +1,8 @@
+body {
+  font-family: 'Ubuntu', sans-serif !important;
+}
+
+
 /*#connect-btn {
   margin-top: 20px;
 }
@@ -15,9 +20,18 @@
   text-align: center;
 }
 
-#viewingRepos {
-  padding: 15px;
+#dropdownMenu1 {
+  border: none;
 }
+
+.error-message {
+  width: 70%;
+  margin: auto;
+}
+
+/*#viewingRepos {
+  padding: 15px;
+}*/
 
 pre {
   background: white !important;
@@ -36,11 +50,29 @@ code {
 h1 {
   display: inline-block;
   width: 40%;
-  border-bottom: 1px solid #aaa;
+  /*border-bottom: 1px solid #aaa;*/
+  padding-top: 15px;
   padding-bottom: 15px;
   margin-bottom: 15px;
-  /*border: 3px solid #73AD21;*/
-  /*padding: 10px;*/
+
+  cursor: pointer;
+  border-radius: 10px;
+  border: 2px solid #fff;
+}
+
+#view-header {
+  margin-left: 20px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+h1:hover {
+  background-color: #f5f5f5;
+  /*border: 1px solid black;*/
+}
+
+h1:active {
+  border: 2px solid #ddd;
 }
 
 table {

@@ -17,9 +17,8 @@ $(function() {
   })
 
   $(".loginsignup").on("click", "#logout", function() {
-    $.get(serverUrl + "/users/logout");
+    $.get(serverUrl + "/logout");
     socketFunctions.resetSocket(socket);
-    $("#signinMessage").html("Not Signed In");
     loginStatus.loggedin = false;
     $("#broadcastingRepos").html("");
 
@@ -39,7 +38,6 @@ $(function() {
 
   ipc.on('loggedin', function(event, username) {
     socketFunctions.resetSocket(socket);
-    // $("#signinMessage").html("Signed in as " + username);
     loginStatus.loggedin = true;
 
     $(".loginsignup").html(

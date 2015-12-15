@@ -4,9 +4,11 @@
     <meta charset="utf-8">
     <title>View a Remote Repository</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
     <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/cyborg/bootstrap.min.css"/> -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/popups.css">
 
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -21,7 +23,7 @@
         <h1><span class="fa fa-folder-open-o"></span> View</h1>
 
         <!-- show any messages that come back with viewing -->
-            <div id="messages"></div>
+            <div id="messages" class="error-message alert alert-danger" style="display: none"></div>
 
         <!-- view form -->
         <div>

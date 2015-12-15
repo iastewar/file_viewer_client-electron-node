@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>File Viewer</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
     <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/cyborg/bootstrap.min.css"/> -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -52,26 +53,27 @@
       <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="view">
           <div class="main-header">
-            <h1 id="view-header">View a Repository</h1>
-            <button id="view-btn" class="btn btn-primary main-btn">View</button>
+            <h1 id="view-btn">View a Repository</h1>
           </div>
+          <div id="view-messages" class="error-message alert alert-danger" style="display: none"></div>
+          <h2 id="view-header"></h2>
           <div id="viewingRepos"></div>
         </div>
 
 
         <div role="tabpanel" class="tab-pane" id="connect">
           <div class="main-header">
-            <h1>Connected Repositories</h1>
-            <button id="connect-btn" class="btn btn-primary main-btn">Connect</button>
+            <h1 id="connect-btn">Connect to a Repository</h1>
           </div>
+          <div id="connect-messages" class="error-message alert alert-danger" style="display: none"></div>
 
           <table>
             <thead>
               <tr>
-                <th width="25%">Name</th>
-                <th width="25%">Owner</th>
-                <th width="25%">Storing To</th>
-                <th width="25%">Stop Connecting?</th>
+                <th width="20%">Name</th>
+                <th width="20%">Owner</th>
+                <th width="40%">Storing To</th>
+                <th width="20%">Stop Connecting?</th>
               </tr>
             </thead>
 
@@ -86,15 +88,15 @@
 
         <div role="tabpanel" class="tab-pane" id="broadcast">
           <div class="main-header">
-            <h1>Broadcasting Repositories</h1>
-            <button id="broadcast-btn" class="btn btn-primary main-btn">Broadcast</button>
+            <h1 id="broadcast-btn" >Broadcast a Repository</h1>
           </div>
+          <div id="broadcast-messages" class="error-message alert alert-danger" style="display: none"></div>
 
           <table>
             <thead>
               <tr>
-                <th width="75%">Name</th>
-                <th width="25%">Stop Broadcasting?</th>
+                <th width="80%">Name</th>
+                <th width="20%">Stop Broadcasting?</th>
               </tr>
             </thead>
 
