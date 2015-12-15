@@ -54,12 +54,13 @@ var sendFile = function(msg) {
 
 var sendDirectoryError = function(msg) {
   delete connecting[msg];
-  console.log("Problem retrieving directory " + msg + ". Either folder does not exist, or the server is experiencing problems")
-  //$("#log").append("<div>Problem retrieving directory. Either folder does not exist, or the server is experiencing problems</div>");
+  $("#connect-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems");
+  $("#connect-messages").fadeIn(1000, function() {
+    setTimeout(function(){
+      $("#connect-messages").fadeOut(1000);
+    }, 3000);
+  });
 }
-
-
-
 
 var addRow = function(owner, name, storingTo) {
   $("#connectedRepos").append(

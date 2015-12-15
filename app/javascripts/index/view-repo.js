@@ -104,7 +104,7 @@ var FileView = React.createClass({
   render: function() {
     return <div className="row">
             <div id="fileTree" className="col-md-3 col-md-offset-1"><TreeNode node={this.props.node} notifyParent={this.swapView}/></div>
-            <div id="fileContents" className="col-md-8">
+            <div id="fileContents" className="col-md-7">
               <div className="panel panel-default">
                 <div className="panel-heading">
                   <h3 className="panel-title">{this.state.fileName}</h3>
@@ -176,8 +176,7 @@ var sendDirectoryError = function(msg) {
     setTimeout(function(){
       $("#view-messages").fadeOut(1000);
     }, 3000);
-  })
-
+  });
 }
 
 $(function(){
