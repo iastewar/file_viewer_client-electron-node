@@ -3,7 +3,7 @@ var socketFunctions = require('../socket-functions');
 var ipc = require('electron').ipcRenderer;
 var remote = require('remote');
 var loginStatus = require('../login-status');
-var serverUrl = 'http://localhost:3000';
+var serverURL = require('../serverURL');
 
 $(function() {
 
@@ -71,7 +71,7 @@ $(function() {
   });
 
   $(".loginsignup").on("click", "#logout", function() {
-    $.get(serverUrl + "/logout");
+    $.get(serverURL + "/logout");
     socketFunctions.resetSocket(socket);
     loginStatus.loggedin = false;
     $("#broadcastingRepos").html("");

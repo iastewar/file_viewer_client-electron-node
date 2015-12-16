@@ -1,11 +1,11 @@
-var serverUrl = 'http://localhost:3000';
+var serverURL = require('./serverURL');
 var cookie = require('./cookie');
 
 var socketFunctions = {};
 
 socketFunctions.resetSocket = function(socket) {
   socket.disconnect();
-  socket.connect(serverUrl, {'force new connection': true,
+  socket.connect(serverURL, {'force new connection': true,
                  query: 'session_id=' + cookie.getCookie('file.view-sid-key')});
 }
 
