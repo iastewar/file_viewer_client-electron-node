@@ -113,8 +113,13 @@ helpers.deleteFileFromServer = function(directoryName, fileName) {
 helpers.sendDirectory = function(directoryName, subDirectories) {
   fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
     if (err) {
-      $("#errors").html("Error: folder contains too many files or does not exist. Try creating a .gitignore file.");
-      return;
+      $("#broadcast-messages").html("Error: folder contains too many files and the broadcast may have failed. Try creating a .gitignore file.");
+      $("#broadcast-messages").fadeIn(1000, function() {
+        setTimeout(function(){
+          $("#broadcast-messages").fadeOut(1000);
+          return;
+        }, 3000);
+      });
     }
 
     var sendTheFiles = function() {
@@ -132,7 +137,12 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
             return;
           }
           if (stats.isFile() && stats.size > 16777216) {
-            console.log("Error, " + fileName + " is over 16MB and can't be sent");
+            $("#broadcast-messages").html("Error, " + fileName + " is over 16MB and can't be sent");
+            $("#broadcast-messages").fadeIn(1000, function() {
+              setTimeout(function(){
+                $("#broadcast-messages").fadeOut(1000);
+              }, 3000);
+            });
           } else if (stats.isDirectory()) {
             if (fileName !== ".git") {
               helpers.sendDirectory(directoryName, subDirs);
