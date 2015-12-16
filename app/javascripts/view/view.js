@@ -10,7 +10,9 @@ var viewFolder = function(owner, name) {
 var submitView = function() {
   var owner = $("input[name='owner']").val();
   var name = $("input[name='name']").val();
-  if (owner === "") {
+  if (owner === "" && name === "") {
+
+  } else if (owner === "") {
     $("#messages").html("Enter an owner").show();
   } else if (name === "") {
     $("#messages").html("Enter a name").show();

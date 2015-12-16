@@ -1,6 +1,20 @@
 var ipc = require('electron').ipcRenderer;
 var remote = require('remote');
 
+var submitLogin = function() {
+  var username = $("input[name='username']").val();
+  var password = $("input[name='password']").val();
+  if (username === "" && password === "") {
+
+  } else if (username === "") {
+    $("#messages").html("Enter a username").show();
+  } else if (password === "") {
+    $("#messages").html("Enter a password").show();
+  } else {
+    $("#login").submit()
+  }
+}
+
 $(function() {
   $("#closelogin").on("click", function() {
     ipc.send('close-login-window');
@@ -36,12 +50,9 @@ $(function() {
 
   $(document).on("keydown", function() {
     if (event.keyCode === 13) {
-      $("#login").submit();
+      submitLogin();
     }
   });
 
-  $("#submitlogin").on("click", function() {
-    $("#login").submit();
-    event.preventDefault();
-  });
+  $("#submitlogin").on("click", submitLogin);
 });

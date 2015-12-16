@@ -29,6 +29,43 @@ app.on('ready', function() {
 
     mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
 
+
+    signupWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600,
+        show: false
+    });
+
+    signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+
+    loginWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600,
+        show: false
+    });
+
+    loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
+
+    connectWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600,
+        show: false
+    });
+
+    connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
+
+    viewWindow = new BrowserWindow({
+        //frame: false,
+        height: 400,
+        width: 600,
+        show: false
+    });
+
+    viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
+
     // mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function() {
@@ -46,20 +83,17 @@ ipc.on('close-main-window', function () {
 });
 
 ipc.on('open-signup-window', function () {
-    if (signupWindow) {
-        return;
-    }
-
-    signupWindow = new BrowserWindow({
-        //frame: false,
-        height: 400,
-        width: 600
-    });
-
-    signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+    signupWindow.show();
 
     signupWindow.on('closed', function () {
-        signupWindow = null;
+      signupWindow = new BrowserWindow({
+          //frame: false,
+          height: 400,
+          width: 600,
+          show: false
+      });
+
+      signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
     });
 });
 
@@ -70,20 +104,17 @@ ipc.on('close-signup-window', function () {
 });
 
 ipc.on('open-login-window', function () {
-    if (loginWindow) {
-        return;
-    }
-
-    loginWindow = new BrowserWindow({
-        //frame: false,
-        height: 400,
-        width: 600
-    });
-
-    loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
+    loginWindow.show();
 
     loginWindow.on('closed', function () {
-        loginWindow = null;
+      loginWindow = new BrowserWindow({
+          //frame: false,
+          height: 400,
+          width: 600,
+          show: false
+      });
+
+      loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
     });
 });
 
@@ -94,20 +125,17 @@ ipc.on('close-login-window', function () {
 });
 
 ipc.on('open-connect-window', function () {
-    if (connectWindow) {
-        return;
-    }
-
-    connectWindow = new BrowserWindow({
-        //frame: false,
-        height: 400,
-        width: 600
-    });
-
-    connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
+    connectWindow.show();
 
     connectWindow.on('closed', function () {
-        connectWindow = null;
+      connectWindow = new BrowserWindow({
+          //frame: false,
+          height: 400,
+          width: 600,
+          show: false
+      });
+
+      connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
     });
 });
 
@@ -118,20 +146,17 @@ ipc.on('close-connect-window', function () {
 });
 
 ipc.on('open-view-window', function () {
-    if (viewWindow) {
-        return;
-    }
-
-    viewWindow = new BrowserWindow({
-        //frame: false,
-        height: 400,
-        width: 600
-    });
-
-    viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
+    viewWindow.show();
 
     viewWindow.on('closed', function () {
-        viewWindow = null;
+      viewWindow = new BrowserWindow({
+          //frame: false,
+          height: 400,
+          width: 600,
+          show: false
+      });
+
+      viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
     });
 });
 
