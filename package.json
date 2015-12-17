@@ -4,9 +4,12 @@
   "main": "./main.js",
   "scripts": {
     "start": "electron .",
-    "watch": "./node_modules/.bin/webpack-dev-server"
+    "watch": "./node_modules/.bin/webpack-dev-server",
+    "package": "asar pack CodeMirror-darwin-x64/CodeMirror.app/Contents/Resources/app CodeMirror-darwin-x64/CodeMirror.app/Contents/Resources/app.asar",
+    "build": "electron-packager . CodeMirror --platform=darwin --arch=x64 --version=0.35.2"
   },
   "devDependencies": {
+    "asar": "^0.8.3",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",
     "electron-packager": "^5.1.1",
