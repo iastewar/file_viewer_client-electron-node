@@ -5,6 +5,7 @@
   "scripts": {
     "start": "electron .",
     "watch": "./node_modules/.bin/webpack-dev-server",
+    "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js",
     "package": "asar pack CodeMirror-darwin-x64/CodeMirror.app/Contents/Resources/app CodeMirror-darwin-x64/CodeMirror.app/Contents/Resources/app.asar",
     "build": "electron-packager . CodeMirror --platform=darwin --arch=x64 --version=0.35.2"
   },
