@@ -14,7 +14,7 @@ var TreeNode = React.createClass({
     this.setState({visible: !this.state.visible});
     this.setState({open: !this.state.open});
     if (this.props.node.fileContents) {
-      this.props.notifyParent(this.props.node.name, this.props.node.fileContents);
+      this.props.notifyParent(this.props.node.name, this.props.node.fileContents, this.props.node.fullName);
     }
   },
   render: function() {
@@ -76,15 +76,16 @@ var FileView = React.createClass({
     }
   },
   getInitialState: function() {
-    return {fileName: "No file selected", fileContents: ""}
+    return {fileName: "No file selected", fileContents: "", fullFileName: ""}
   },
-  swapView: function(fileName, fileContents) {
+  swapView: function(fileName, fileContents, fullFileName) {
     this.setState({fileName: fileName});
     this.setState({fileContents: fileContents});
+    this.setState({fullFileName: fullFileName});
   },
   componentWillReceiveProps: function() {
-    var findContents = function(node, fileName) {
-      if (node.name === fileName) {
+    var findContents = function(node, fullFileName) {
+      if (node.fullName === fullFileName) {
         return node.fileContents;
       }
       if (!node.childNodes) {
@@ -92,14 +93,14 @@ var FileView = React.createClass({
       }
       var childrenLength = node.childNodes.length;
       for (var i = 0; i < childrenLength; i++) {
-        var fileContents = findContents(node.childNodes[i], fileName);
+        var fileContents = findContents(node.childNodes[i], fullFileName);
         if (fileContents) {
           return fileContents;
         }
       }
     }
 
-    this.swapView(this.state.fileName, findContents(this.props.node,this.state.fileName));
+    this.setState({fileContents: findContents(this.props.node, this.state.fullFileName)});
   },
   render: function() {
     return <div className="row">
@@ -120,27 +121,28 @@ var FileView = React.createClass({
 
 var fileTree = {};
 
-var addToFileTree = function(fileTree, fileNameArray, length, index, fileContents) {
+var addToFileTree = function(fileTree, fileNameArray, length, index, fileName, fileContents) {
   fileTree.name = fileNameArray[index];
   if (index === length - 1) {
     fileTree.fileContents = fileContents;
+    fileTree.fullName = fileName;
     return;
   }
   if (!fileTree.childNodes) {
     fileTree.childNodes = [{name: fileNameArray[index + 1]}];
-    addToFileTree(fileTree.childNodes[0], fileNameArray, length, index + 1, fileContents);
+    addToFileTree(fileTree.childNodes[0], fileNameArray, length, index + 1, fileName, fileContents);
   } else {
     var flag = false;
     var childrenLength = fileTree.childNodes.length;
     for (var i = 0; i < childrenLength; i++) {
       if (fileNameArray[index + 1] === fileTree.childNodes[i].name) {
-        addToFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1, fileContents);
+        addToFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1, fileName, fileContents);
         flag = true;
       }
     }
     if (!flag) {
       fileTree.childNodes.push({name: fileNameArray[index + 1]});
-      addToFileTree(fileTree.childNodes[fileTree.childNodes.length - 1], fileNameArray, length, index + 1, fileContents);
+      addToFileTree(fileTree.childNodes[fileTree.childNodes.length - 1], fileNameArray, length, index + 1, fileName, fileContents);
     }
   }
 }
@@ -202,7 +204,7 @@ socket.on('send file', function(msg){
   if (msg.deleted) {
     removeFromFileTree(fileTree, fileNameArray, fileNameArray.length, 0);
   } else {
-    addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, ab2str(msg.fileContents));
+    addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, msg.fileName, ab2str(msg.fileContents));
     ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
    }
 });
