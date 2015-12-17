@@ -4,12 +4,19 @@ var remote = require('remote');
 var submitSignup = function() {
   var username = $("input[name='username']").val();
   var password = $("input[name='password']").val();
+  var usernameRegex = /^[-\w\.\$@\*\!]{3,32}$/;
+  var passwordRegex = /^.{3,32}$/;
+
   if (username === "" && password === "") {
 
   } else if (username === "") {
-    $("#messages").html("Enter a username").show();
+    $("#messages").html("Enter a username.").show();
   } else if (password === "") {
-    $("#messages").html("Enter a password").show();
+    $("#messages").html("Enter a password.").show();
+  } else if (!usernameRegex.test(username)) {
+    $("#messages").html("Usernames must be 3 to 32 characters long and can only contain letters, numbers, ., -, _, $, @, *,  and !.").show();
+  } else if (!passwordRegex.test(password)) {
+    $("#messages").html("Passwords mush be 3 to 32 characters long.").show();
   } else {
     $("#signup").submit()
   }
@@ -36,7 +43,7 @@ $(function() {
               ipc.send('loggedin', data.user.username);
               ipc.send('close-signup-window');
             } else {
-              $("#messages").html("Username already taken or a field is blank").show();
+              $("#messages").html("Username already taken").show();
             }
 
           },

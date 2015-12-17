@@ -54,7 +54,7 @@ var sendFile = function(msg) {
 
 var sendDirectoryError = function(msg) {
   delete connecting[msg];
-  $("#connect-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems");
+  $("#connect-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems.");
   $("#connect-messages").fadeIn(1000, function() {
     setTimeout(function(){
       $("#connect-messages").fadeOut(1000);

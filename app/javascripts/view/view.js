@@ -13,9 +13,9 @@ var submitView = function() {
   if (owner === "" && name === "") {
 
   } else if (owner === "") {
-    $("#messages").html("Enter an owner").show();
+    $("#messages").html("Enter an owner.").show();
   } else if (name === "") {
-    $("#messages").html("Enter a name").show();
+    $("#messages").html("Enter a name.").show();
   } else {
     viewFolder(owner, name);
   }

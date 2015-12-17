@@ -173,7 +173,7 @@ ab2str = function(buf) {
 }
 
 var sendDirectoryError = function(msg) {
-  $("#view-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems");
+  $("#view-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems.");
   $("#view-messages").fadeIn(1000, function() {
     setTimeout(function(){
       $("#view-messages").fadeOut(1000);

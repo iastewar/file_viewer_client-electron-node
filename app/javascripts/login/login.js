@@ -7,9 +7,9 @@ var submitLogin = function() {
   if (username === "" && password === "") {
 
   } else if (username === "") {
-    $("#messages").html("Enter a username").show();
+    $("#messages").html("Enter a username.").show();
   } else if (password === "") {
-    $("#messages").html("Enter a password").show();
+    $("#messages").html("Enter a password.").show();
   } else {
     $("#login").submit()
   }

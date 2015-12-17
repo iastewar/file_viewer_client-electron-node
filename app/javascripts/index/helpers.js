@@ -137,7 +137,7 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
             return;
           }
           if (stats.isFile() && stats.size > 16777216) {
-            $("#broadcast-messages").html("Error, " + fileName + " is over 16MB and can't be sent");
+            $("#broadcast-messages").html("Error, " + fileName + " is over 16MB and can't be sent.");
             $("#broadcast-messages").fadeIn(1000, function() {
               setTimeout(function(){
                 $("#broadcast-messages").fadeOut(1000);
