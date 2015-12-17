@@ -17,6 +17,9 @@ var sendFile = function(msg) {
     // get directory of file to be saved
     var directory = helpers.connectedRepos[serverDir];
     for (var i = 0; i < dirFileArray.length - 1; i++) {
+      fs.mkdir(directory, function(err) {
+
+      });
       directory = directory + '/' + dirFileArray[i];
     }
 
