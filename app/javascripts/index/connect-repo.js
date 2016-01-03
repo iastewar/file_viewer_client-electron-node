@@ -5,64 +5,84 @@ var socket = require('../socket');
 var helpers = require('./helpers');
 var ipc = require('electron').ipcRenderer;
 
+// seperator is "/" for mac and linux, and "\\" for windows
+var seperator = "/";
+
 var connecting = {};
 
 var sendFile = function(msg) {
-  var dirFileArray = msg.fileName.split("/");
+  if (seperator === "\\") {
+    msg.fileName = msg.fileName.replace(/\//g, '\\');
+  }
+  var dirFileArray = msg.fileName.split(seperator);
   var serverDir = msg.owner + "/" + dirFileArray[0];
   if (!helpers.connectedRepos[serverDir]) {
     console.log("Error! Received an unknown file")
   } else {
     // else write file to the connected directory.
-    // get directory of file to be saved
-    var directory = helpers.connectedRepos[serverDir];
-    for (var i = 0; i < dirFileArray.length - 1; i++) {
-      fs.mkdir(directory, function(err) {
-
-      });
-      directory = directory + '/' + dirFileArray[i];
-    }
-
-    // try to create the directory
-    fs.mkdir(directory, function(err) {
-      // if file should be deleted, delete it
-      if (msg.deleted) {
-        fs.stat(helpers.connectedRepos[serverDir] + '/' + msg.fileName, function(err, stats) {
+    // if file should be deleted, delete it
+    if (msg.deleted) {
+      fs.stat(helpers.connectedRepos[serverDir] + seperator + msg.fileName, function(err, stats) {
         if (!stats) {
           return;
         }
         if (stats.isFile()) {
-          fs.unlink(helpers.connectedRepos[serverDir] + '/' + msg.fileName, function(err) {
+          fs.unlink(helpers.connectedRepos[serverDir] + seperator + msg.fileName, function(err) {
             if (err) {
               return console.log(err);
             }
           });
         } else {
-          helpers.rmdirRec(helpers.connectedRepos[serverDir] + '/' + msg.fileName, "");
+          helpers.rmdirRec(helpers.connectedRepos[serverDir] + seperator + msg.fileName, "");
         }
       });
+    } else {
       // otherwise, save the file
-      } else {
-        fs.writeFile(helpers.connectedRepos[serverDir] + '/' + msg.fileName, helpers.toBuffer(msg.fileContents), function(err) {
-            if(err) {
+      // get directory of file to be saved
+      var directory = helpers.connectedRepos[serverDir];
+
+      // try to create the directory followed by the file
+      var createDirectory = function(index) {
+        directory = directory + '/' + dirFileArray[index];
+        if (index >= dirFileArray.length - 2) {
+          fs.mkdir(directory, function(err) {
+            createFile();
+          });
+        } else {
+          fs.mkdir(directory, function(err) {
+            createDirectory(index+1);
+          });
+        }
+      }
+
+      var createFile = function() {
+        fs.writeFile(helpers.connectedRepos[serverDir] + seperator + msg.fileName, helpers.toBuffer(msg.fileContents), function(err) {
+            if (err) {
                 return console.log(err);
             }
 
             console.log("The file was saved!");
         });
       }
-    });
+
+      fs.mkdir(directory, function(err) {
+        createDirectory(0);
+      });
+
+    }
   }
 }
 
 var sendDirectoryError = function(msg) {
-  delete connecting[msg];
-  $("#connect-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems.");
-  $("#connect-messages").fadeIn(1000, function() {
-    setTimeout(function(){
-      $("#connect-messages").fadeOut(1000);
-    }, 3000);
-  });
+  if (connecting[msg]) {
+    delete connecting[msg];
+    $("#connect-messages").html(
+      "<div class='alert alert-danger'>" +
+      "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+      "Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems." +
+      "</div>"
+    );
+  }
 }
 
 var addRow = function(owner, name, storingTo) {

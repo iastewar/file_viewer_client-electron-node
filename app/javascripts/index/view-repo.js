@@ -3,6 +3,9 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var ipc = require('electron').ipcRenderer;
 
+// seperator is "/" for mac and linux, and "\\" for windows
+var seperator = "/";
+
 var serverFolder;
 var tryingToView = false;
 
@@ -173,12 +176,15 @@ ab2str = function(buf) {
 }
 
 var sendDirectoryError = function(msg) {
-  $("#view-messages").html("Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems.");
-  $("#view-messages").fadeIn(1000, function() {
-    setTimeout(function(){
-      $("#view-messages").fadeOut(1000);
-    }, 3000);
-  });
+  if (tryingToView) {
+    tryingToView = false;
+    $("#view-messages").html(
+      "<div class='alert alert-danger'>" +
+      "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+      "Problem retrieving directory " + msg + ". Either repository does not exist, or the server is experiencing problems." +
+      "</div>"
+    );
+  }
 }
 
 $(function() {
@@ -197,8 +203,12 @@ $(function() {
 
 
 socket.on('send file', function(msg){
-  var fileNameArray = msg.fileName.split("/");
+  if (seperator === "\\") {
+    msg.fileName = msg.fileName.replace(/\//g, '\\');
+  }
+  var fileNameArray = msg.fileName.split(seperator);
   if (msg.owner + "/" + fileNameArray[0] !== serverFolder) {
+    console.log(msg.owner + "/" + fileNameArray[0] + " is not equal to viewing folder " + serverFolder);
     return;
   }
   if (msg.deleted) {
@@ -206,7 +216,7 @@ socket.on('send file', function(msg){
   } else {
     addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, msg.fileName, ab2str(msg.fileContents));
     ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
-   }
+  }
 });
 
 ipc.on('viewing', function(event, args) {

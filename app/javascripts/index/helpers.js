@@ -3,6 +3,11 @@ var parser = require('gitignore-parser')
 var socket = require('../socket');
 var helpers = {};
 
+// seperator is "/" for mac and linux, and "\\" for windows
+var seperator = "/";
+
+var maxFileSize = 5242880;
+
 // key is directory name, value is an object with watcher, gitignore, and sentDirectory
 helpers.broadcastingRepos = {};
 
@@ -14,7 +19,7 @@ helpers.setUpGitIgnore = function(directoryName, fileNames, callback) {
   var index = 0;
   fileNames.forEach(function(fileName) {
     if (fileName === ".gitignore") {
-      fs.readFile(directoryName + "/" + fileName, 'utf8', function(err, data) {
+      fs.readFile(directoryName + seperator + fileName, 'utf8', function(err, data) {
         helpers.broadcastingRepos[directoryName].gitignore = parser.compile(data);
         console.log("gitignore created for" + directoryName);
         index++;
@@ -37,40 +42,40 @@ helpers.setUpGitIgnore = function(directoryName, fileNames, callback) {
 }
 
 helpers.rmdirRec = function(directoryName, subDirectories, callback) {
-	fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
+	fs.readdir(directoryName + seperator + subDirectories, function(err, fileNames) {
 		if (err) {
 			if (callback)
 				callback();
 		} else {
 			var index = 0;
 			fileNames.forEach(function(fileName) {
-				fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
+				fs.stat(directoryName + seperator + subDirectories + seperator + fileName, function(err, stats) {
 					if (err || !stats) {
-						fs.rmdir(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
+						fs.rmdir(directoryName + seperator + subDirectories + seperator + fileName, function(err) {
 						});
 					} else {
 						var subDirs;
 						if (subDirectories === "") {
 							subDirs = fileName;
 						} else {
-							subDirs = subDirectories + '/' + fileName;
+							subDirs = subDirectories + seperator + fileName;
 						}
 
 						if (stats.isDirectory()) {
 							helpers.rmdirRec(directoryName, subDirs, function() {
 								index++;
 								if (index === fileNames.length) {
-									fs.rmdir(directoryName + '/' + subDirectories, function(err) {
+									fs.rmdir(directoryName + seperator + subDirectories, function(err) {
 										if (callback)
 											callback();
 									});
 								}
 							});
 						} else {
-							fs.unlink(directoryName + '/' + subDirectories + '/' + fileName, function(err) {
+							fs.unlink(directoryName + seperator + subDirectories + seperator + fileName, function(err) {
 								index++;
 		            if (index === fileNames.length) {
-		              fs.rmdir(directoryName + '/' + subDirectories, function(err) {
+		              fs.rmdir(directoryName + seperator + subDirectories, function(err) {
 										if (callback)
 											callback();
 									});
@@ -97,60 +102,75 @@ helpers.toBuffer = function(ab) {
 // sends a file to the server where directoryName/fileName is the path of the file,
 // and data is the content of the file
 helpers.sendFileToServer = function(directoryName, fileName, data) {
-  var dirArray = directoryName.split("/");
+  var dirArray = directoryName.split(seperator);
   var currentDir = dirArray[dirArray.length-1];
+
+  if (seperator === "\\") {
+    fileName = fileName.replace(/\\/g, '/');
+  }
+
   socket.emit('send file', {fileName: currentDir + '/' + fileName, fileContents: data});
 }
 
 // deletes a file from the server where directoryName/fileName is the path of the file,
 helpers.deleteFileFromServer = function(directoryName, fileName) {
-  var dirArray = directoryName.split("/");
+  var dirArray = directoryName.split(seperator);
   var currentDir = dirArray[dirArray.length - 1];
+
+  if (seperator === "\\") {
+    fileName = fileName.replace(/\\/g, '/');
+  }
+
   socket.emit('send file', {fileName: currentDir + '/' + fileName, deleted: true});
 }
 
 
 helpers.sendDirectory = function(directoryName, subDirectories) {
-  fs.readdir(directoryName + '/' + subDirectories, function(err, fileNames) {
+  fs.readdir(directoryName + seperator + subDirectories, function(err, fileNames) {
     if (err) {
-      $("#broadcast-messages").html("Error: folder contains too many files and the broadcast may have failed. Try creating a .gitignore file.");
-      $("#broadcast-messages").fadeIn(1000, function() {
-        setTimeout(function(){
-          $("#broadcast-messages").fadeOut(1000);
-          return;
-        }, 3000);
-      });
+      $("#broadcast-messages").html(
+        "<div class='alert alert-danger'>" +
+        "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+        "Error: folder contains too many files and the broadcast may have failed. Try creating a .gitignore file." +
+        "</div>"
+      );
     }
 
     var sendTheFiles = function() {
       // fileName could be a file or a directory
       fileNames.forEach(function(fileName){
-        fs.stat(directoryName + '/' + subDirectories + '/' + fileName, function(err, stats) {
-          var subDirs;
-          if (subDirectories === "") {
-            subDirs = fileName;
+        fs.stat(directoryName + seperator + subDirectories + seperator + fileName, function(err, stats) {
+          if (err) {
+            console.log(err);
+          } else if (!stats) {
+            console.log("could not retrieve stats for file: " + directoryName + seperator + subDirectories + seperator + fileName)
           } else {
-            subDirs = subDirectories + '/' + fileName;
-          }
-          if (helpers.broadcastingRepos[directoryName] && helpers.broadcastingRepos[directoryName].gitignore && helpers.broadcastingRepos[directoryName].gitignore.denies(subDirs)) {
-            console.log("denied " + subDirs);
-            return;
-          }
-          if (stats.isFile() && stats.size > 16777216) {
-            $("#broadcast-messages").html("Error, " + fileName + " is over 16MB and can't be sent.");
-            $("#broadcast-messages").fadeIn(1000, function() {
-              setTimeout(function(){
-                $("#broadcast-messages").fadeOut(1000);
-              }, 3000);
-            });
-          } else if (stats.isDirectory()) {
-            if (fileName !== ".git") {
-              helpers.sendDirectory(directoryName, subDirs);
+            var subDirs;
+            if (subDirectories === "") {
+              subDirs = fileName;
+            } else {
+              subDirs = subDirectories + seperator + fileName;
             }
-          } else {
-            fs.readFile(directoryName + '/' + subDirectories + '/' + fileName, function(err, data) {
-              helpers.sendFileToServer(directoryName, subDirs, data);
-            });
+            if (helpers.broadcastingRepos[directoryName] && helpers.broadcastingRepos[directoryName].gitignore && helpers.broadcastingRepos[directoryName].gitignore.denies(subDirs)) {
+              console.log("denied " + subDirs);
+              return;
+            }
+            if (stats.isFile() && stats.size > maxFileSize) {
+              $("#broadcast-messages").html(
+                "<div class='alert alert-danger'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+                "One or more files were over 5MB and could not be sent." +
+                "</div>"
+              );
+            } else if (stats.isDirectory()) {
+              if (fileName !== ".git") {
+                helpers.sendDirectory(directoryName, subDirs);
+              }
+            } else {
+              fs.readFile(directoryName + seperator + subDirectories + seperator + fileName, function(err, data) {
+                helpers.sendFileToServer(directoryName, subDirs, data);
+              });
+            }
           }
         });
       });

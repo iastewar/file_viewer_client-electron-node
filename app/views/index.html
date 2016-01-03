@@ -13,6 +13,7 @@
     <script src="../../dependencies/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../dependencies/highlight/highlight.pack.js"></script>
     <script src="http://52.34.2.212/socket.io/socket.io.js"></script>
+    <!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script> -->
     <script>require('../javascripts/index/index.js')</script>
     <script>require('../javascripts/index/connect-repo.js')</script>
     <script>require('../javascripts/index/broadcast-repo.js')</script>
@@ -52,7 +53,7 @@
           <div class="main-header">
             <h1 id="view-btn">View a Repository</h1>
           </div>
-          <div id="view-messages" class="error-message alert alert-danger" style="display: none"></div>
+          <div id="view-messages" class="error-message"></div>
           <h2 id="view-header"></h2>
           <div id="viewingRepos"></div>
         </div>
@@ -62,7 +63,7 @@
           <div class="main-header">
             <h1 id="connect-btn">Connect to a Repository</h1>
           </div>
-          <div id="connect-messages" class="error-message alert alert-danger" style="display: none"></div>
+          <div id="connect-messages" class="error-message"></div>
 
           <table>
             <thead>
@@ -87,7 +88,7 @@
           <div class="main-header">
             <h1 id="broadcast-btn">Broadcast a Repository</h1>
           </div>
-          <div id="broadcast-messages" class="error-message alert alert-danger" style="display: none"></div>
+          <div id="broadcast-messages" class="error-message"></div>
 
           <table>
             <thead>
