@@ -25,13 +25,13 @@ var TreeNode = React.createClass({
     var t = this;
     if (this.props.node.childNodes) {
       childNodes = this.props.node.childNodes.map(function(node, index) {
-        return <div key={index}><TreeNode node={node} notifyParent={t.props.notifyParent}/></div>
+        return <div key={index}><TreeNode node={node} selectedFile={t.props.selectedFile} notifyParent={t.props.notifyParent} depth={t.props.depth + 1}/></div>
       });
     }
 
-    var style = {marginLeft: "25px"};
+    var childStyle = {};
     if (!this.state.visible) {
-      style = {marginLeft: "25px", display: "none"};
+      childStyle = {display: "none"};
     }
 
     var folderClass;
@@ -44,17 +44,32 @@ var TreeNode = React.createClass({
       caretClass = "fa fa-caret-right";
     }
 
+    var style = {};
+    if (this.props.node.fullName === this.props.selectedFile) {
+      style = {backgroundColor: "#454b54", cursor: "pointer", color: "white", border: "1px solid black", borderRadius: "3px"}
+    } else {
+      style = {cursor: "pointer", borderRadius: "3px"}
+    }
+
     var node;
     if (this.props.node.childNodes) {
-      node = <div onClick={this.toggle} className={caretClass} style={{cursor: "pointer"}}> <div className={folderClass}> {this.props.node.name}</div></div>;
+      node = <div className={caretClass}> <div className={folderClass}> {this.props.node.name}</div></div>;
     } else {
-      node = <div onClick={this.toggle} style={{cursor: "pointer"}} className="fa fa-file-text-o"> {this.props.node.name}</div>;
+      node = <div className="fa fa-file-text-o"> {this.props.node.name}</div>;
+    }
+
+    var space = "";
+    for (var i = 0; i < this.props.depth; i++) {
+      space += "\u2003 \u2002"
     }
 
     return (
       <div>
-        {node}
-        <div style={style}>
+        <div onClick={this.toggle} style={style} className="backgroundDiv">
+          {space}
+          {node}
+        </div>
+        <div style={childStyle}>
           {childNodes}
         </div>
       </div>
@@ -72,10 +87,9 @@ var FileView = React.createClass({
   highlightCode: function () {
     var domNode = ReactDOM.findDOMNode(this);
     var nodes = domNode.querySelectorAll('pre code');
-    if (nodes.length > 0) {
-      for (var i = 0; i < nodes.length; i++) {
-        hljs.highlightBlock(nodes[i]);
-      }
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].className = "";
+      hljs.highlightBlock(nodes[i]);
     }
   },
   getInitialState: function() {
@@ -106,9 +120,9 @@ var FileView = React.createClass({
     this.setState({fileContents: findContents(this.props.node, this.state.fullFileName)});
   },
   render: function() {
-    return <div className="row">
-            <div id="fileTree" className="col-md-3 col-md-offset-1"><TreeNode node={this.props.node} notifyParent={this.swapView}/></div>
-            <div id="fileContents" className="col-md-7">
+    return <div id="fileView">
+            <div id="fileTree"><TreeNode node={this.props.node} selectedFile={this.state.fullFileName} notifyParent={this.swapView} depth={0}/></div>
+            <div id="fileContents">
               <div className="panel panel-default">
                 <div className="panel-heading">
                   <h3 className="panel-title">{this.state.fileName}</h3>
