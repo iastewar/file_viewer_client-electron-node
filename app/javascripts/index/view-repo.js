@@ -46,9 +46,9 @@ var TreeNode = React.createClass({
 
     var style = {};
     if (this.props.node.fullName === this.props.selectedFile) {
-      style = {padding: "1px 15px 1px 15px", backgroundColor: "#454b54", cursor: "pointer", color: "white", borderTop: "1px solid black", borderBottom: "1px solid black"}
+      style = {padding: "1px 15px 1px 15px", backgroundColor: "#454b54", cursor: "default", color: "white", borderTop: "1px solid black", borderBottom: "1px solid black"}
     } else {
-      style = {padding: "1px 15px 1px 15px", cursor: "pointer"}
+      style = {padding: "1px 15px 1px 15px", cursor: "default"}
     }
 
     var node;
@@ -250,6 +250,7 @@ socket.on('connected', function(msg) {
     $("#view-header").html(arr[0]);
     serverFolder = msg;
     tryingToView = false;
+    $("#view-help").hide();
   }
 });
 

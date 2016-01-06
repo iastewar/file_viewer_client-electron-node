@@ -56,8 +56,10 @@ var broadcastRepo = function() {
 
         helpers.sendDirectory(directoryNames[0], "");
 
-        if (numRepos === 0)
+        if (numRepos === 0) {
           addHeader();
+          $("#broadcast-help").hide();
+        }
         numRepos++;
 
         addRow(directoryNames[0]);
@@ -135,8 +137,10 @@ $(function() {
 
     $(this).parent().parent().remove();
 
-    if (numRepos === 1)
+    if (numRepos === 1) {
       removeHeader();
+      $("#broadcast-help").show();
+    }
     numRepos--;
   })
 })

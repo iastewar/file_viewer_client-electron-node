@@ -137,8 +137,10 @@ $(function() {
 
     $(this).parent().parent().remove();
 
-    if (numRepos === 1)
+    if (numRepos === 1) {
       removeHeader();
+      $("#connect-help").show();
+    }
     numRepos--;
   })
 });
@@ -161,8 +163,10 @@ socket.on('connected', function(msg) {
 
     addRow(arr[0], arr[1], connecting[msg]);
 
-    if (numRepos === 0)
+    if (numRepos === 0) {
       addHeader();
+      $("#connect-help").hide();
+    }
     numRepos++;
 
 

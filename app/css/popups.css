@@ -1,3 +1,11 @@
+a {
+  cursor: default;
+}
+
+.btn {
+  cursor: default;
+}
+
 body {
   font-family: 'Ubuntu', sans-serif !important;
   background-color: #1b1e21;
