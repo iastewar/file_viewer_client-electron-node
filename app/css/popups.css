@@ -1,3 +1,31 @@
 body {
   font-family: 'Ubuntu', sans-serif !important;
+  background-color: #1b1e21;
+}
+
+#window {
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  height: 20px;
+  z-index: 1;
+  text-align: center;
+  -webkit-app-region: drag;
+  cursor: default;
+}
+
+#main-container {
+  position: absolute;
+  top: 15px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  -webkit-app-region: drag;
+  cursor: default;
+}
+
+button, input {
+  -webkit-app-region: no-drag;
+  cursor: auto;
 }

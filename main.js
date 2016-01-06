@@ -32,8 +32,9 @@ app.on('ready', function() {
 
 
     signupWindow = new BrowserWindow({
+        'title-bar-style': 'hidden',
         //frame: false,
-        height: 400,
+        height: 300,
         width: 600,
         show: false
     });
@@ -41,8 +42,9 @@ app.on('ready', function() {
     signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
 
     loginWindow = new BrowserWindow({
+        'title-bar-style': 'hidden',
         //frame: false,
-        height: 400,
+        height: 300,
         width: 600,
         show: false
     });
@@ -50,8 +52,9 @@ app.on('ready', function() {
     loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
 
     connectWindow = new BrowserWindow({
+        'title-bar-style': 'hidden',
         //frame: false,
-        height: 400,
+        height: 300,
         width: 600,
         show: false
     });
@@ -59,8 +62,9 @@ app.on('ready', function() {
     connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
 
     viewWindow = new BrowserWindow({
+        'title-bar-style': 'hidden',
         //frame: false,
-        height: 400,
+        height: 300,
         width: 600,
         show: false
     });
@@ -88,8 +92,9 @@ ipc.on('open-signup-window', function () {
 
     signupWindow.on('closed', function () {
       signupWindow = new BrowserWindow({
+          'title-bar-style': 'hidden',
           //frame: false,
-          height: 400,
+          height: 300,
           width: 600,
           show: false
       });
@@ -109,8 +114,9 @@ ipc.on('open-login-window', function () {
 
     loginWindow.on('closed', function () {
       loginWindow = new BrowserWindow({
+          'title-bar-style': 'hidden',
           //frame: false,
-          height: 400,
+          height: 300,
           width: 600,
           show: false
       });
@@ -130,8 +136,9 @@ ipc.on('open-connect-window', function () {
 
     connectWindow.on('closed', function () {
       connectWindow = new BrowserWindow({
+          'title-bar-style': 'hidden',
           //frame: false,
-          height: 400,
+          height: 300,
           width: 600,
           show: false
       });
@@ -151,8 +158,9 @@ ipc.on('open-view-window', function () {
 
     viewWindow.on('closed', function () {
       viewWindow = new BrowserWindow({
+          'title-bar-style': 'hidden',
           //frame: false,
-          height: 400,
+          height: 300,
           width: 600,
           show: false
       });
