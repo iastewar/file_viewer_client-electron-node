@@ -33,7 +33,7 @@ var addHeader = function() {
 }
 
 var removeHeader = function() {
-  $("#broadcastingReposHead tr").remove();
+  $("#broadcastingReposHead").html("");
 }
 
 

@@ -4,6 +4,7 @@ var ipc = require('electron').ipcRenderer;
 var remote = require('remote');
 var loginStatus = require('../login-status');
 var serverURL = require('../serverURL');
+var helpers = require('./helpers');
 
 $(function() {
 
@@ -71,10 +72,21 @@ $(function() {
   });
 
   $(".loginsignup").on("click", "#logout", function() {
+    for (var key in helpers.broadcastingRepos) {
+      if (helpers.broadcastingRepos.hasOwnProperty(key)) {
+        if (helpers.broadcastingRepos[key].watcher) {
+          helpers.broadcastingRepos[key].watcher.close();
+        }
+      }
+    }
+    helpers.broadcastingRepos = {};
+
     $.get(serverURL + "/logout");
     socketFunctions.resetSocket(socket);
     loginStatus.loggedin = false;
+
     $("#broadcastingRepos").html("");
+    $("#broadcastingReposHead").html("");
 
     $(".loginsignup").html(
 

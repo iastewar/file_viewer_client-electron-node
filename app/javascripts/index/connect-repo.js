@@ -111,7 +111,7 @@ var addHeader = function() {
 }
 
 var removeHeader = function() {
-  $("#connectedReposHead tr").remove();
+  $("#connectedReposHead").html("");
 }
 
 $(function() {
