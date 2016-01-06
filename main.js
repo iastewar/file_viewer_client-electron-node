@@ -23,6 +23,7 @@ var viewWindow = null;
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
+        'title-bar-style': 'hidden',
         height: 768,
         width: 1200
     });
