@@ -7,9 +7,9 @@ var serverURL = require('../serverURL');
 
 $(function() {
 
-  // toggle tabs with right and left arrows
-  $(document).on("keyup", function() {
-    if (event.keyCode === 37) {
+  // toggle tabs with 'a' and 'd' keys
+  $(document).on("keydown", function() {
+    if (event.keyCode === 65) {
       var openTab = $(".active").find("a").html();
       switch(openTab) {
         case "View":
@@ -33,7 +33,7 @@ $(function() {
           $("#connect").addClass("active");
           break;
       }
-    } else if (event.keyCode === 39) {
+    } else if (event.keyCode === 68) {
       var openTab = $(".active").find("a").html();
       switch(openTab) {
         case "View":

@@ -10,6 +10,8 @@ var seperator = "/";
 
 var connecting = {};
 
+var numRepos = 0;
+
 var sendFile = function(msg) {
   if (seperator === "\\") {
     msg.fileName = msg.fileName.replace(/\//g, '\\');
@@ -88,13 +90,28 @@ var sendDirectoryError = function(msg) {
 var addRow = function(owner, name, storingTo) {
   $("#connectedRepos").append(
   "<tr>" +
-    "<td class='connectedName'>" + name + "</td>" +
-    "<td class='connectedOwner'>" + owner + "</td>" +
-    "<td class='connectedStoringTo'>" + storingTo + "</td>" +
-    "<td><div class='btn btn-danger stopConnecting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
+    "<td class='connectedName' width='20%'>" + name + "</td>" +
+    "<td class='connectedOwner' width='20%'>" + owner + "</td>" +
+    "<td class='connectedStoringTo' width='40%'>" + storingTo + "</td>" +
+    "<td width='20%'><div class='btn btn-danger stopConnecting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
   "</tr>"
 
   );
+}
+
+var addHeader = function() {
+  $("#connectedReposHead").append(
+  "<tr>" +
+    "<th width='20%'>Name</th>" +
+    "<th width='20%'>Owner</th>" +
+    "<th width='40%'>Storing To</th>" +
+    "<th width='20%'>Stop Connecting?</th>" +
+  "</tr>"
+  );
+}
+
+var removeHeader = function() {
+  $("#connectedReposHead tr").remove();
 }
 
 $(function() {
@@ -119,6 +136,10 @@ $(function() {
     socket.emit('disconnect folder', connectedOwner + "/" + connectedName);
 
     $(this).parent().parent().remove();
+
+    if (numRepos === 1)
+      removeHeader();
+    numRepos--;
   })
 });
 
@@ -139,6 +160,11 @@ socket.on('connected', function(msg) {
     arr = msg.split("/");
 
     addRow(arr[0], arr[1], connecting[msg]);
+
+    if (numRepos === 0)
+      addHeader();
+    numRepos++;
+
 
     delete connecting[msg];
   }

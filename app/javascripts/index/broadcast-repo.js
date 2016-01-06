@@ -11,14 +11,29 @@ var seperator = "/";
 
 var maxFileSize = 5242880;
 
+var numRepos = 0;
+
 var addRow = function(directoryName) {
   $("#broadcastingRepos").append(
   "<tr>" +
-    "<td class='broadcastName'>" + directoryName + "</td>" +
-    "<td><div class='btn btn-danger stopBroadcasting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
+    "<td class='broadcastName' width='80%'>" + directoryName + "</td>" +
+    "<td width='20%'><div class='btn btn-danger stopBroadcasting'><span class='fa fa-stop'>&nbsp;&nbsp;Stop</span></div></td>" +
   "</tr>"
 
   );
+}
+
+var addHeader = function() {
+  $("#broadcastingReposHead").append(
+    "<tr>" +
+      "<th width='80%'>Name</th>" +
+      "<th width='20%'>Stop Broadcasting?</th>" +
+    "</tr>"
+  );
+}
+
+var removeHeader = function() {
+  $("#broadcastingReposHead tr").remove();
 }
 
 
@@ -40,6 +55,10 @@ var broadcastRepo = function() {
         helpers.broadcastingRepos[directoryNames[0]] = {sentDirectory: false};
 
         helpers.sendDirectory(directoryNames[0], "");
+
+        if (numRepos === 0)
+          addHeader();
+        numRepos++;
 
         addRow(directoryNames[0]);
 
@@ -115,6 +134,10 @@ $(function() {
     socket.emit('delete folder', arr[arr.length - 1]);
 
     $(this).parent().parent().remove();
+
+    if (numRepos === 1)
+      removeHeader();
+    numRepos--;
   })
 })
 

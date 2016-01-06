@@ -1,24 +1,69 @@
 body {
   font-family: 'Ubuntu', sans-serif !important;
+  background-color: #1b1e21;
 }
 
 .tab {
-  width: 14%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
 }
 
-.tab a {
-  margin: auto;
-  text-align: center;
+#header {
+  background-color: #1b1e21;
+  position: absolute;
+  width: 100%;
+}
+
+#left-pane {
+  background-color: #1b1e21;
+  position: absolute;
+  height: 100%;
+  width: 20px;
+  left: 0px;
+  top: 0px;
+}
+
+#right-pane {
+  background-color: #1b1e21;
+  position: absolute;
+  height: 100%;
+  width: 20px;
+  right: 0px;
+  top: 0px;
+}
+
+#footer {
+  background-color: #1b1e21;
+  position: absolute;
+  height: 30px;
+  width: 100%;
+  left: 0px;
+  bottom: 0px;
+}
+
+#main-container {
+  border: 1px solid black;
+  position: absolute;
+  background-color: #272b30;
+  top: 62px;
+  left: 20px;
+  right: 20px;
+  bottom: 30px;
 }
 
 .main-header {
-  margin: auto;
+  position: absolute;
+  left: 50%;
+  top: 1%;
   text-align: center;
 }
 
-/*#dropdownMenu1 {
-  border: none;
-}*/
+#dropdownMenu1 {
+  height: 42px;
+  margin-top: 10px;
+  margin-right: 5px;
+}
 
 .error-message {
   width: 70%;
@@ -26,9 +71,11 @@ body {
 }
 
 #view-header {
-  margin-left: 8%;
-  margin-top: 0px;
-  margin-bottom: 20px;
+  position: absolute;
+  left: 4%;
+  top: 4%;
+  width: 25%;
+  overflow: hidden;
 }
 
 pre {
@@ -36,9 +83,26 @@ pre {
   border: none !important;
   padding: 0 !important;
 }
-code {
+
+pre code {
   background: #2e3338 !important;
   padding: 0 !important;
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+}
+
+pre .lines {
+  float:left;
+  margin:0 1em 0 -1em;
+  border-right: 1px solid;
+  text-align:right;
+}
+
+pre .line-number {
+  display:block;
+  padding:0 .5em 0 1em;
+  color: #969896;
 }
 
 #fileView {
@@ -46,17 +110,35 @@ code {
 }
 
 #fileTree {
-  vertical-align: top;
-  display: inline-block;
-  min-width: 10%;
-  margin-left: 8%;
+  background-color: #2a2f33;
+  position: absolute;
+  overflow: auto;
+  width: 20%;
+  height: 81%;
+  left: 4%;
+  top: 15%;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+
 }
 
 #fileContents {
-  vertical-align: top;
-  display: inline-block;
-  min-width: 70%;
-  margin-left: 2%;
+  background-color: #2e3338;
+  position: absolute;
+  overflow: auto;
+  width: 72%;
+  height: 81%;
+  left: 24%;
+  top: 15%;
+  border: 1px solid black;
+  padding: 15px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 .backgroundDiv:hover {
@@ -67,20 +149,16 @@ code {
   color: #aaaaaa;
 }
 
-tr:hover {
-  background-color: #23262a
-}
+.main-header h2 {
+  position: relative;
+  padding: 5px;
+  left: -50%;
 
-h1 {
-  display: inline-block;
-  width: 40%;
-  /*border-bottom: 1px solid #aaa;*/
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
+  width: 375px;
 
+  overflow: hidden;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 3px;
   border: 2px solid #fff;
 }
 
@@ -126,19 +204,35 @@ h1 {
   border: 2px solid #007499;
 }
 
-table {
-  width: 95%;
-  margin: auto;
+.scrollTableContainer {
+  position: absolute;
+  width: 92%;
+  left: 4%;
+  top: 15%;
+  height: 81%;
 }
 
-th {
+.tBodyContainer {
+  height: 88%;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.tHeadContainer table th {
   border-bottom: 1px solid #ddd;
   padding: 15px;
   text-align: left;
 }
 
-td {
+.tBodyContainer table td {
   border-bottom: 1px solid #777;
   padding: 15px;
   text-align: left;
 }
+
+/*tr:hover {
+  background-color: #23262a
+}*/
