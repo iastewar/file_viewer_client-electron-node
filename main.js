@@ -38,8 +38,8 @@ app.on('ready', function() {
     signupWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 300,
-        width: 600,
+        height: 320,
+        width: 500,
         show: false
     });
 
@@ -48,8 +48,8 @@ app.on('ready', function() {
     loginWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 300,
-        width: 600,
+        height: 320,
+        width: 500,
         show: false
     });
 
@@ -58,8 +58,8 @@ app.on('ready', function() {
     connectWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 300,
-        width: 600,
+        height: 320,
+        width: 500,
         show: false
     });
 
@@ -68,8 +68,8 @@ app.on('ready', function() {
     viewWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 300,
-        width: 600,
+        height: 320,
+        width: 500,
         show: false
     });
 
@@ -122,13 +122,21 @@ ipc.on('open-signup-window', function () {
       signupWindow = new BrowserWindow({
           titleBarStyle: titleBarStyle,
           frame: frame,
-          height: 300,
-          width: 600,
+          height: 320,
+          width: 500,
           show: false
       });
 
       signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
     });
+});
+
+ipc.on('minimize-signup-window', function () {
+    signupWindow.minimize();
+});
+
+ipc.on('maximize-signup-window', function () {
+    signupWindow.maximize();
 });
 
 ipc.on('close-signup-window', function () {
@@ -144,13 +152,21 @@ ipc.on('open-login-window', function () {
       loginWindow = new BrowserWindow({
           titleBarStyle: titleBarStyle,
           frame: frame,
-          height: 300,
-          width: 600,
+          height: 320,
+          width: 500,
           show: false
       });
 
       loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
     });
+});
+
+ipc.on('minimize-login-window', function () {
+    loginWindow.minimize();
+});
+
+ipc.on('maximize-login-window', function () {
+    loginWindow.maximize();
 });
 
 ipc.on('close-login-window', function () {
@@ -166,13 +182,21 @@ ipc.on('open-connect-window', function () {
       connectWindow = new BrowserWindow({
           titleBarStyle: titleBarStyle,
           frame: frame,
-          height: 300,
-          width: 600,
+          height: 320,
+          width: 500,
           show: false
       });
 
       connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
     });
+});
+
+ipc.on('minimize-connect-window', function () {
+    connectWindow.minimize();
+});
+
+ipc.on('maximize-connect-window', function () {
+    connectWindow.maximize();
 });
 
 ipc.on('close-connect-window', function () {
@@ -188,13 +212,21 @@ ipc.on('open-view-window', function () {
       viewWindow = new BrowserWindow({
           titleBarStyle: titleBarStyle,
           frame: frame,
-          height: 300,
-          width: 600,
+          height: 320,
+          width: 500,
           show: false
       });
 
       viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
     });
+});
+
+ipc.on('minimize-view-window', function () {
+    viewWindow.minimize();
+});
+
+ipc.on('maximize-view-window', function () {
+    viewWindow.maximize();
 });
 
 ipc.on('close-view-window', function () {

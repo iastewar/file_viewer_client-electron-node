@@ -40,15 +40,6 @@ body {
   -webkit-app-region: no-drag;
 }
 
-.window-btn:hover {
-  background-color: #484e55;
-}
-
-.window-btn:active {
-  color: white;
-  background-color: #3a3f46;
-}
-
 #window-maximize-btn {
   position: absolute;
   padding-top: 5px;
@@ -70,6 +61,16 @@ body {
   z-index: 999;
   -webkit-app-region: no-drag;
 }
+
+.window-btn:hover {
+  background-color: #484e55;
+}
+
+.window-btn:active {
+  color: white;
+  background-color: #3a3f46;
+}
+
 
 #header {
   background-color: #1b1e21;

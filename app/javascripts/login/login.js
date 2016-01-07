@@ -16,6 +16,24 @@ var submitLogin = function() {
 }
 
 $(function() {
+
+  if (process.platform === 'darwin') {
+    $("#window").append(
+      "<div id='window-minimize-btn' class='window-btn'>\u2500</div>" +
+      "<div id='window-maximize-btn' class='window-btn'>\u25a2</div>" +
+      "<div id='window-close-btn' class='window-btn'>\u2573</div>"
+    );
+    $("#window-minimize-btn").on("click", function() {
+      ipc.send('minimize-login-window');
+    });
+    $("#window-maximize-btn").on("click", function() {
+      ipc.send('maximize-login-window');
+    });
+    $("#window-close-btn").on("click", function() {
+      ipc.send('close-login-window');
+    });
+  }
+
   $("#closelogin").on("click", function() {
     ipc.send('close-login-window');
     event.preventDefault();
