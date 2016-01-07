@@ -9,6 +9,7 @@ a {
 body {
   font-family: 'Ubuntu', sans-serif !important;
   background-color: #1b1e21;
+  overflow: hidden;
 }
 
 #window {
@@ -19,6 +20,7 @@ body {
   height: 20px;
   z-index: 1;
   -webkit-app-region: drag;
+  -webkit-user-select: none;
   cursor: default;
   text-align: center;
 }
@@ -31,12 +33,12 @@ body {
   top: 15px;
   margin: 0px;
   -webkit-app-region: drag;
+  -webkit-user-select: none;
   cursor: default;
 }
 
 #header .tab {
   -webkit-app-region: no-drag;
-  cursor: auto;
 }
 
 #header button {
@@ -61,6 +63,7 @@ body {
   left: 0px;
   top: 0px;
   -webkit-app-region: drag;
+  -webkit-user-select: none;
   cursor: default;
 }
 
@@ -72,6 +75,7 @@ body {
   right: 0px;
   top: 0px;
   -webkit-app-region: drag;
+  -webkit-user-select: none;
   cursor: default;
 }
 
@@ -83,6 +87,7 @@ body {
   left: 0px;
   bottom: 0px;
   -webkit-app-region: drag;
+  -webkit-user-select: none;
   cursor: default;
 }
 
@@ -96,13 +101,6 @@ body {
   bottom: 15px;
 }
 
-.main-header {
-  position: absolute;
-  left: 50%;
-  top: 0px;
-  text-align: center;
-}
-
 #loginsignupdropdown {
   padding-right: 10px;
 }
@@ -110,6 +108,31 @@ body {
 #dropdownMenu1 {
   height: 42px;
   margin-top: 10px;
+}
+
+.main-header {
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  text-align: center;
+}
+
+.help {
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  top: 85px;
+  bottom: 0px;
+  overflow: auto;
+}
+
+.help .help-textbox {
+  font-size: 1.2em;
+  margin-left: 20%;
+  margin-right: 20%;
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 3px;
 }
 
 .error-message {
@@ -300,18 +323,19 @@ table {
   text-align: left;
 }
 
+.stop-btn {
+  border-radius: 50px;
+  height: 50px;
+  width: 50px;
+}
+
+.stop-btn span {
+  margin-top: 8px;
+}
+
 /*tr:hover {
   background-color: #23262a
 }*/
-
-.help {
-  position: absolute;
-  width: 100%;
-  left: 0px;
-  top: 85px;
-  bottom: 0px;
-  overflow: auto;
-}
 
 @keyframes fadein {
     0% { opacity: 0; }
@@ -320,13 +344,4 @@ table {
 
 .fadeIn {
   -webkit-animation: fadein 2s ease-out;
-}
-
-.help div {
-  font-size: 1.2em;
-  margin-left: 25%;
-  margin-right: 25%;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 3px;
 }

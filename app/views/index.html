@@ -61,10 +61,15 @@
           <div id="view-messages" class="error-message"></div>
 
           <div id="view-help" class="help">
-            <div>
-              Click the button to view a user's repository by specifying their username
-              and repository name. Remember that only text files can be viewed. If a non-text
-              file is in the repository, the view will not update properly.
+            <div class="help-textbox">
+              <p>
+                Click the button to view a user's repository by specifying their username
+                and repository name.
+              </p>
+              <p>
+                Remember that only text files can be viewed. If a non-text
+                file is in the repository, the view will not update properly.
+              </p>
             </div>
           </div>
 
@@ -80,13 +85,17 @@
           <div id="connect-messages" class="error-message"></div>
 
           <div id="connect-help" class="help">
-            <div>
-              Click the button to connect to a user's repository by specifying their username
-              and repository name, and pointing to a directory of your choice. The repository will
-              then be stored in the chosen directory and will be a perfect reflection of the original.
-              Remember that any edits you make to the files in the repository will be overwritten if the owner
-              edits the file. This differs from viewing since all file types will update properly (not only text files).
-              You can connect to multiple repositories.
+            <div class="help-textbox">
+              <p>
+                Click the button to connect to a user's repository by specifying their username
+                and repository name, and pointing to a directory of your choice. The repository will
+                then be stored in the chosen directory and will be a perfect reflection of the original.
+              </p>
+              <p>
+                Remember that any edits you make to the files in the repository will be overwritten if the owner
+                edits the file. This differs from viewing since all file types will update properly (not only text files).
+                You can connect to multiple repositories.
+              </p>
             </div>
           </div>
 
@@ -108,10 +117,18 @@
           <div id="broadcast-messages" class="error-message"></div>
 
           <div id="broadcast-help" class="help">
-            <div>
-              Click the button to broadcast a directory of your choice. You must be logged in to access
-              this feature. Once a directory is broadcasted, it will be able to be viewed by anyone who
-              knows your username. You can broadcast multiple directories.
+            <div class="help-textbox">
+              <p>
+                Click the button to broadcast a directory of your choice. You must be logged in to access
+                this feature. Once a directory is broadcasted, it will be able to be viewed by anyone who
+                knows your username. You can broadcast multiple directories.
+              </p>
+              <p>
+                As of right now, a maximum of 500 files is allowed per directory, and each file
+                must be no larger than 5MB (this may change in the future). A .gitignore file can
+                be created to prevent certain files and directories from being broadcasted. This file should follow
+                the exact same format as a normal .gitignore file for GitHub.
+              </p>
             </div>
           </div>
 
