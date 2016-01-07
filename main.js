@@ -12,28 +12,32 @@ var signupWindow = null;
 var connectWindow = null;
 var viewWindow = null;
 
-// app.on('window-all-closed', function() {
-//   // On OS X it is common for applications and their menu bar
-//   // to stay active until the user quits explicitly with Cmd + Q
-//   if (process.platform != 'darwin') {
-//     app.quit();
-//   }
-// });
+var titleBarStyle = 'default';
+var frame = false;
 
+if (process.platform === 'darwin') {
+  titleBarStyle = 'hidden';
+  frame = true;
+}
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
-        'title-bar-style': 'hidden',
+        titleBarStyle: titleBarStyle,
+        frame: frame,
         height: 768,
-        width: 1200
+        width: 1200,
+        show: false
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
 
+    mainWindow.webContents.on('did-finish-load', function() {
+      mainWindow.show();
+    });
 
     signupWindow = new BrowserWindow({
-        'title-bar-style': 'hidden',
-        //frame: false,
+        titleBarStyle: titleBarStyle,
+        frame: frame,
         height: 300,
         width: 600,
         show: false
@@ -42,8 +46,8 @@ app.on('ready', function() {
     signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
 
     loginWindow = new BrowserWindow({
-        'title-bar-style': 'hidden',
-        //frame: false,
+        titleBarStyle: titleBarStyle,
+        frame: frame,
         height: 300,
         width: 600,
         show: false
@@ -52,8 +56,8 @@ app.on('ready', function() {
     loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
 
     connectWindow = new BrowserWindow({
-        'title-bar-style': 'hidden',
-        //frame: false,
+        titleBarStyle: titleBarStyle,
+        frame: frame,
         height: 300,
         width: 600,
         show: false
@@ -62,8 +66,8 @@ app.on('ready', function() {
     connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
 
     viewWindow = new BrowserWindow({
-        'title-bar-style': 'hidden',
-        //frame: false,
+        titleBarStyle: titleBarStyle,
+        frame: frame,
         height: 300,
         width: 600,
         show: false
@@ -75,16 +79,40 @@ app.on('ready', function() {
 
     mainWindow.on('closed', function() {
       mainWindow = null;
-      loginWindow = null;
-      signupWindow = null;
-      connectWindow = null;
-      viewWindow = null;
-      app.quit();
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
     });
 });
 
+app.on('activate', function() {
+  if (!mainWindow) {
+    mainWindow = new BrowserWindow({
+        titleBarStyle: titleBarStyle,
+        frame: frame,
+        height: 768,
+        width: 1200,
+        show: false
+    });
+
+    mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+    mainWindow.webContents.on('did-finish-load', function() {
+      mainWindow.show();
+    });
+  }
+});
+
+ipc.on('minimize-main-window', function () {
+    mainWindow.minimize();
+});
+
+ipc.on('maximize-main-window', function () {
+    mainWindow.maximize();
+});
+
 ipc.on('close-main-window', function () {
-    app.quit();
+    mainWindow.close();
 });
 
 ipc.on('open-signup-window', function () {
@@ -92,8 +120,8 @@ ipc.on('open-signup-window', function () {
 
     signupWindow.on('closed', function () {
       signupWindow = new BrowserWindow({
-          'title-bar-style': 'hidden',
-          //frame: false,
+          titleBarStyle: titleBarStyle,
+          frame: frame,
           height: 300,
           width: 600,
           show: false
@@ -114,8 +142,8 @@ ipc.on('open-login-window', function () {
 
     loginWindow.on('closed', function () {
       loginWindow = new BrowserWindow({
-          'title-bar-style': 'hidden',
-          //frame: false,
+          titleBarStyle: titleBarStyle,
+          frame: frame,
           height: 300,
           width: 600,
           show: false
@@ -136,8 +164,8 @@ ipc.on('open-connect-window', function () {
 
     connectWindow.on('closed', function () {
       connectWindow = new BrowserWindow({
-          'title-bar-style': 'hidden',
-          //frame: false,
+          titleBarStyle: titleBarStyle,
+          frame: frame,
           height: 300,
           width: 600,
           show: false
@@ -158,8 +186,8 @@ ipc.on('open-view-window', function () {
 
     viewWindow.on('closed', function () {
       viewWindow = new BrowserWindow({
-          'title-bar-style': 'hidden',
-          //frame: false,
+          titleBarStyle: titleBarStyle,
+          frame: frame,
           height: 300,
           width: 600,
           show: false

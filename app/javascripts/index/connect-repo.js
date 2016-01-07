@@ -7,6 +7,9 @@ var ipc = require('electron').ipcRenderer;
 
 // seperator is "/" for mac and linux, and "\\" for windows
 var seperator = "/";
+if (process.platform === 'win32') {
+  seperator = "\\"
+}
 
 var connecting = {};
 

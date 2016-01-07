@@ -8,6 +8,9 @@ var loginStatus = require('../login-status');
 
 // seperator is "/" for mac and linux, and "\\" for windows
 var seperator = "/";
+if (process.platform === 'win32') {
+  seperator = "\\"
+}
 
 var maxFileSize = 5242880;
 
