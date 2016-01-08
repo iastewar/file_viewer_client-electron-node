@@ -300,7 +300,7 @@ pre .line-number {
 
 #fixed-fileTree {
   position: absolute;
-  width: 100%;
+  min-width: 100%;
 }
 
 #fileContents {
