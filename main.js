@@ -38,7 +38,7 @@ app.on('ready', function() {
     signupWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 320,
+        height: 400,
         width: 500,
         show: false
     });
@@ -48,7 +48,7 @@ app.on('ready', function() {
     loginWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 320,
+        height: 400,
         width: 500,
         show: false
     });
@@ -58,7 +58,7 @@ app.on('ready', function() {
     connectWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 320,
+        height: 400,
         width: 500,
         show: false
     });
@@ -68,7 +68,7 @@ app.on('ready', function() {
     viewWindow = new BrowserWindow({
         titleBarStyle: titleBarStyle,
         frame: frame,
-        height: 320,
+        height: 400,
         width: 500,
         show: false
     });
@@ -131,7 +131,7 @@ ipc.on('open-signup-window', function () {
         signupWindow = new BrowserWindow({
             titleBarStyle: titleBarStyle,
             frame: frame,
-            height: 320,
+            height: 400,
             width: 500,
             show: false
         });
@@ -169,7 +169,7 @@ ipc.on('open-login-window', function () {
         loginWindow = new BrowserWindow({
             titleBarStyle: titleBarStyle,
             frame: frame,
-            height: 320,
+            height: 400,
             width: 500,
             show: false
         });
@@ -207,7 +207,7 @@ ipc.on('open-connect-window', function () {
         connectWindow = new BrowserWindow({
             titleBarStyle: titleBarStyle,
             frame: frame,
-            height: 320,
+            height: 400,
             width: 500,
             show: false
         });
@@ -245,7 +245,7 @@ ipc.on('open-view-window', function () {
         viewWindow = new BrowserWindow({
             titleBarStyle: titleBarStyle,
             frame: frame,
-            height: 320,
+            height: 400,
             width: 500,
             show: false
         });

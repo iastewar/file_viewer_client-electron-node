@@ -309,6 +309,10 @@ pre .line-number {
   border-bottom-right-radius: 3px;*/
 }
 
+.backgroundDiv {
+  width: 100%;
+}
+
 .backgroundDiv:hover {
   background-color: #3a3f46 !important;
 }
