@@ -135,7 +135,11 @@ var FileView = React.createClass({
 
 
     return <div id="fileView">
-            <div id="fileTree"><TreeNode node={this.props.node} selectedFile={this.state.fullFileName} notifyParent={this.swapView} depth={0}/></div>
+            <div id="fileTree">
+              <div id="fixed-fileTree">
+                <TreeNode node={this.props.node} selectedFile={this.state.fullFileName} notifyParent={this.swapView} depth={0}/>
+              </div>
+            </div>
             <div id="fileContents">
               <pre><div className="lines">{lineNumbers}</div><code>{this.state.fileContents}</code></pre>
             </div>

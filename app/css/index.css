@@ -251,6 +251,8 @@ pre {
   background: #33383e !important;
   border: none !important;
   padding: 0 !important;
+  height: 100%;
+  overflow: visible;
 }
 
 pre code {
@@ -259,6 +261,8 @@ pre code {
   white-space: pre;
   word-break: normal;
   word-wrap: normal;
+  height: 100%;
+  overflow-x: visible !important;
 }
 
 pre .lines {
@@ -282,7 +286,7 @@ pre .line-number {
   /*background-color: #2a2f33;*/
   position: absolute;
   overflow: auto;
-  width: 20%;
+  min-width: 20%;
   left: 0%;
   top: 85px;
   bottom: 0px;
@@ -294,10 +298,14 @@ pre .line-number {
 
 }
 
+#fixed-fileTree {
+  position: absolute;
+}
+
 #fileContents {
   background-color: #33383e;
   position: absolute;
-  overflow: auto;
+  overflow-y: auto;
   width: 80%;
   left: 20%;
   top: 85px;
@@ -307,10 +315,6 @@ pre .line-number {
   padding: 15px;
   /*border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;*/
-}
-
-.backgroundDiv {
-  width: 100%;
 }
 
 .backgroundDiv:hover {
