@@ -80,6 +80,10 @@ app.on('ready', function() {
     mainWindow.on('closed', function() {
       mainWindow = null;
       if (process.platform !== 'darwin') {
+        if (loginWindow) loginWindow.close();
+        if (signupWindow) signupWindow.close();
+        if (connectWindow) connectWindow.close();
+        if (viewWindow) viewWindow.close();
         app.quit();
       }
     });
@@ -123,15 +127,19 @@ ipc.on('open-signup-window', function () {
     signupWindow.show();
 
     signupWindow.on('closed', function () {
-      signupWindow = new BrowserWindow({
-          titleBarStyle: titleBarStyle,
-          frame: frame,
-          height: 320,
-          width: 500,
-          show: false
-      });
+      if (mainWindow) {
+        signupWindow = new BrowserWindow({
+            titleBarStyle: titleBarStyle,
+            frame: frame,
+            height: 320,
+            width: 500,
+            show: false
+        });
 
-      signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+        signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+      } else {
+        signupWindow = null;
+      }
     });
 });
 
@@ -157,15 +165,19 @@ ipc.on('open-login-window', function () {
     loginWindow.show();
 
     loginWindow.on('closed', function () {
-      loginWindow = new BrowserWindow({
-          titleBarStyle: titleBarStyle,
-          frame: frame,
-          height: 320,
-          width: 500,
-          show: false
-      });
+      if (mainWindow) {
+        loginWindow = new BrowserWindow({
+            titleBarStyle: titleBarStyle,
+            frame: frame,
+            height: 320,
+            width: 500,
+            show: false
+        });
 
-      loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
+        loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
+      } else {
+        loginWindow = null;
+      }
     });
 });
 
@@ -191,15 +203,19 @@ ipc.on('open-connect-window', function () {
     connectWindow.show();
 
     connectWindow.on('closed', function () {
-      connectWindow = new BrowserWindow({
-          titleBarStyle: titleBarStyle,
-          frame: frame,
-          height: 320,
-          width: 500,
-          show: false
-      });
+      if (mainWindow) {
+        connectWindow = new BrowserWindow({
+            titleBarStyle: titleBarStyle,
+            frame: frame,
+            height: 320,
+            width: 500,
+            show: false
+        });
 
-      connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
+        connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
+      } else {
+        connectWindow = null;
+      }
     });
 });
 
@@ -225,15 +241,19 @@ ipc.on('open-view-window', function () {
     viewWindow.show();
 
     viewWindow.on('closed', function () {
-      viewWindow = new BrowserWindow({
-          titleBarStyle: titleBarStyle,
-          frame: frame,
-          height: 320,
-          width: 500,
-          show: false
-      });
+      if (mainWindow) {
+        viewWindow = new BrowserWindow({
+            titleBarStyle: titleBarStyle,
+            frame: frame,
+            height: 320,
+            width: 500,
+            show: false
+        });
 
-      viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
+        viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
+      } else {
+        viewWindow = null;
+      }
     });
 });
 
