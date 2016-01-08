@@ -111,6 +111,10 @@ ipc.on('maximize-main-window', function () {
     mainWindow.maximize();
 });
 
+ipc.on('restore-main-window', function() {
+    mainWindow.unmaximize();
+})
+
 ipc.on('close-main-window', function () {
     mainWindow.close();
 });
@@ -137,6 +141,10 @@ ipc.on('minimize-signup-window', function () {
 
 ipc.on('maximize-signup-window', function () {
     signupWindow.maximize();
+});
+
+ipc.on('restore-signup-window', function () {
+    signupWindow.unmaximize();
 });
 
 ipc.on('close-signup-window', function () {
@@ -169,6 +177,10 @@ ipc.on('maximize-login-window', function () {
     loginWindow.maximize();
 });
 
+ipc.on('restore-login-window', function () {
+    loginWindow.unmaximize();
+});
+
 ipc.on('close-login-window', function () {
     if (loginWindow) {
         loginWindow.close();
@@ -199,6 +211,10 @@ ipc.on('maximize-connect-window', function () {
     connectWindow.maximize();
 });
 
+ipc.on('restore-connect-window', function () {
+    connectWindow.unmaximize();
+});
+
 ipc.on('close-connect-window', function () {
     if (connectWindow) {
         connectWindow.close();
@@ -227,6 +243,10 @@ ipc.on('minimize-view-window', function () {
 
 ipc.on('maximize-view-window', function () {
     viewWindow.maximize();
+});
+
+ipc.on('restore-view-window', function () {
+    viewWindow.unmaximize();
 });
 
 ipc.on('close-view-window', function () {

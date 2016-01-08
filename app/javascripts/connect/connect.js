@@ -32,17 +32,22 @@ var submitConnect = function() {
 
 $(function() {
 
-  if (process.platform === 'darwin') {
+  if (process.platform !== 'darwin') {
     $("#window").append(
       "<div id='window-minimize-btn' class='window-btn'>\u2500</div>" +
-      "<div id='window-maximize-btn' class='window-btn'>\u25a2</div>" +
+      "<div id='window-maximize-cont'><div id='window-maximize-btn' class='window-btn'><div></div></div></div>" +
       "<div id='window-close-btn' class='window-btn'>\u2573</div>"
     );
     $("#window-minimize-btn").on("click", function() {
       ipc.send('minimize-connect-window');
     });
-    $("#window-maximize-btn").on("click", function() {
+    $("#window-maximize-cont").on("click", "#window-maximize-btn", function() {
       ipc.send('maximize-connect-window');
+      $("#window-maximize-cont").html("<div id='window-restore-btn' class='window-btn'><div></div><div></div></div>");
+    });
+    $("#window-maximize-cont").on("click", "#window-restore-btn", function() {
+      ipc.send('restore-connect-window');
+      $("#window-maximize-cont").html("<div id='window-maximize-btn' class='window-btn'><div></div></div>");
     });
     $("#window-close-btn").on("click", function() {
       ipc.send('close-connect-window');
