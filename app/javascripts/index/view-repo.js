@@ -196,8 +196,20 @@ var removeFromFileTree = function(fileTree, fileNameArray, length, index) {
   }
 }
 
-ab2str = function(buf) {
-  return String.fromCharCode.apply(null, new Uint8Array(buf));
+var ab2str = function(buffer) {
+  var bufView = new Uint8Array(buffer);
+  var length = bufView.length;
+  var result = "";
+  for (var i = 0; i < length; i += 65535) {
+      var addition = 65535;
+      if (i + 65535 > length) {
+          addition = length - i;
+      }
+      result += String.fromCharCode.apply(null, bufView.subarray(i,i+addition));
+  }
+
+  return result;
+
 }
 
 var sendDirectoryError = function(msg) {

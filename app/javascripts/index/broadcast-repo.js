@@ -12,7 +12,7 @@ if (process.platform === 'win32') {
   seperator = "\\"
 }
 
-var maxFileSize = 5242880;
+var maxFileSize = 20971520;
 
 var numRepos = 0;
 
@@ -80,7 +80,7 @@ var broadcastRepo = function() {
               $("#broadcast-messages").html(
                 "<div class='alert alert-danger'>" +
                 "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-                fileName + " is over 5MB and can't be sent." +
+                fileName + " is over " + maxFileSize / 1048576 + "MB and can't be sent." +
                 "</div>"
               );
             } else {
@@ -153,6 +153,16 @@ socket.on('max files allowed', function(msg) {
     "<div class='alert alert-danger'>" +
     "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
     "You have reached the maximum file limit of " + msg + " files. One or more files were not saved on the server." +
+    "</div>"
+  );
+});
+
+socket.on('max directory size allowed', function(msg) {
+  var sizeInMB = msg / 1048576;
+  $("#broadcast-messages").html(
+    "<div class='alert alert-danger'>" +
+    "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+    "You have reached the maximum limit of " + sizeInMB + "MB. One or more files were not saved on the server." +
     "</div>"
   );
 });

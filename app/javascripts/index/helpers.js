@@ -9,7 +9,7 @@ if (process.platform === 'win32') {
   seperator = "\\"
 }
 
-var maxFileSize = 5242880;
+var maxFileSize = 20971520;
 
 // key is directory name, value is an object with watcher, gitignore, and sentDirectory
 helpers.broadcastingRepos = {};
@@ -162,7 +162,7 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
               $("#broadcast-messages").html(
                 "<div class='alert alert-danger'>" +
                 "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-                "One or more files were over 5MB and could not be sent." +
+                "One or more files were over " + maxFileSize / 1048576 + "MB and could not be sent." +
                 "</div>"
               );
             } else if (stats.isDirectory()) {
