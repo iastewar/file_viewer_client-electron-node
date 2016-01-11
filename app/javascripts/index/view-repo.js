@@ -262,9 +262,9 @@ $(function() {
   $("#view-form-show").on("click", viewFormShow);
 
   $("#view-form-show-container").on("click", ".user-folder", function() {
-    console.log("trying to view " + helpers.viewFormShowing + "/" + $(this).html());
+    console.log("trying to view " + helpers.viewFormShowing + "/" + $(this).text());
     tryingToView = true;
-    socket.emit('connect folder', helpers.viewFormShowing + "/" + $(this).html());
+    socket.emit('connect folder', helpers.viewFormShowing + "/" + $(this).text());
     $("#forms-container").hide();
     $("#view-form").attr("data", "hidden");
     $("#main-container").css("opacity", "1");
@@ -316,7 +316,7 @@ socket.on('user folder', function(msg) {
   }
 
   if (!userFolders[msg.name]) {
-    $("#view-form-show-container").append("<div class='user-folder'>" + msg.name + "</div>");
+    $("#view-form-show-container").append("<div class='user-folder'><span class='fa fa-folder' style='margin-right: 15px;'></span>" + msg.name + "</div>");
     userFolders[msg.name] = true;
   }
 });

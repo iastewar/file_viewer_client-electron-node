@@ -162,9 +162,9 @@ $(function() {
       if (!directoryNames) {
         return;
       } else {
-        console.log("connecting to " + helpers.connectFormShowing + "/" + $(t).html());
+        console.log("connecting to " + helpers.connectFormShowing + "/" + $(t).text());
 
-        var serverFolder = helpers.connectFormShowing + "/" + $(t).html();
+        var serverFolder = helpers.connectFormShowing + "/" + $(t).text();
 
         socket.emit('connect folder', serverFolder);
         connecting[serverFolder] = directoryNames[0];
@@ -239,7 +239,7 @@ socket.on('user folder', function(msg) {
   }
 
   if (!userFolders[msg.name]) {
-    $("#connect-form-show-container").append("<div class='user-folder'>" + msg.name + "</div>");
+    $("#connect-form-show-container").append("<div class='user-folder'><span class='fa fa-folder' style='margin-right: 15px;'></span>" + msg.name + "</div>");
     userFolders[msg.name] = true;
   }
 });
