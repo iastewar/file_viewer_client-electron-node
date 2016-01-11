@@ -1,7 +1,12 @@
 var fs = require('fs');
-var parser = require('gitignore-parser')
-var socket = require('../socket');
+var parser = require('gitignore-parser');
+var socketFunctions = require('../socket-functions');
 var helpers = {};
+
+if (!socketFunctions.socket) {
+  socketFunctions.connect(socket);
+}
+var socket = socketFunctions.socket;
 
 // seperator is "/" for mac and linux, and "\\" for windows
 var seperator = "/";
@@ -10,6 +15,12 @@ if (process.platform === 'win32') {
 }
 
 var maxFileSize = 20971520;
+
+helpers.connectFormShowing;
+
+helpers.viewFormShowing;
+
+helpers.viewServerFolder;
 
 // key is directory name, value is an object with watcher, gitignore, and sentDirectory
 helpers.broadcastingRepos = {};

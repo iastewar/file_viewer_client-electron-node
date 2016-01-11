@@ -1,7 +1,13 @@
-var socket = require('../socket');
+var socketFunctions = require('../socket-functions');
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ipc = require('electron').ipcRenderer;
+var helpers = require('./helpers');
+
+if (!socketFunctions.socket) {
+  socketFunctions.connect(socket);
+}
+var socket = socketFunctions.socket;
 
 // seperator is "/" for mac and linux, and "\\" for windows
 var seperator = "/";
@@ -9,7 +15,8 @@ if (process.platform === 'win32') {
   seperator = "\\"
 }
 
-var serverFolder;
+var userFolders = {};
+
 var tryingToView = false;
 
 var TreeNode = React.createClass({
@@ -225,17 +232,47 @@ var sendDirectoryError = function(msg) {
 }
 
 $(function() {
-  $(document).on("keydown", function() {
-    if (event.keyCode === 13) {
-      if ($(".active").find("a").html() === "View") {
-        ipc.send('open-view-window');
-      }
-    }
-  });
+  // $(document).on("keydown", function() {
+  //   if (event.keyCode === 13) {
+  //     if ($(".active").find("a").html() === "View") {
+  //       ipc.send('open-view-window');
+  //     }
+  //   }
+  // });
 
   $("#view-btn").on("click", function() {
-    ipc.send('open-view-window');
+    $("#connect-form-container").hide();
+    $("#forms-container").show();
+    $("#view-form").attr("data", "showing");
+    $("#main-container").css("opacity", "0.3");
+    $("#empty-container").css("z-index", "50");
   });
+
+  $("#view-form-show").on("click", function() {
+    var owner = $("#view-form input[name='owner']").val();
+    if (owner === "") return;
+    socket.emit('show user folders', owner);
+    if (helpers.viewFormShowing && helpers.viewFormShowing !== helpers.connectFormShowing) {
+      console.log(helpers.viewFormShowing + " " + helpers.connectFormShowing);
+      socket.emit('disconnect user folders', helpers.viewFormShowing);
+    }
+    helpers.viewFormShowing = owner;
+    userFolders = {};
+    $("#view-form input[name='owner']").val("");
+    $("#view-form-show-header").html(owner + "'s Repositories")
+    $("#view-form-show-container").show().html("");
+  });
+
+  $("#view-form-show-container").on("click", ".user-folder", function() {
+    console.log("trying to view " + helpers.viewFormShowing + "/" + $(this).html());
+    tryingToView = true;
+    socket.emit('connect folder', helpers.viewFormShowing + "/" + $(this).html());
+    $("#forms-container").hide();
+    $("#view-form").attr("data", "hidden");
+    $("#main-container").css("opacity", "1");
+    $("#empty-container").css("z-index", "-50");
+  });
+
 });
 
 
@@ -244,8 +281,8 @@ socket.on('send file', function(msg){
     msg.fileName = msg.fileName.replace(/\//g, '\\');
   }
   var fileNameArray = msg.fileName.split(seperator);
-  if (msg.owner + "/" + fileNameArray[0] !== serverFolder) {
-    console.log(msg.owner + "/" + fileNameArray[0] + " is not equal to viewing folder " + serverFolder);
+  if (msg.owner + "/" + fileNameArray[0] !== helpers.viewServerFolder) {
+    console.log(msg.owner + "/" + fileNameArray[0] + " is not equal to viewing folder " + helpers.viewServerFolder);
     return;
   }
   if (msg.deleted) {
@@ -256,21 +293,46 @@ socket.on('send file', function(msg){
   }
 });
 
-ipc.on('viewing', function(event, args) {
-  console.log("trying to view " + args.owner + "/" + args.name);
-  tryingToView = true;
-  socket.emit('connect folder', args.owner + "/" + args.name);
-});
-
 socket.on('connected', function(msg) {
   if (tryingToView) {
     fileTree = {};
     var arr = msg.split("/");
     $("#view-header").html(arr[0]);
-    serverFolder = msg;
+
+    if (helpers.viewServerFolder && !helpers.connectedRepos[helpers.viewServerFolder]) {
+      socket.emit('disconnect folder', helpers.viewServerFolder)
+    }
+    helpers.viewServerFolder = msg;
     tryingToView = false;
     $("#view-help").hide();
   }
 });
 
 socket.on('send directory error', sendDirectoryError);
+
+socket.on('user folder', function(msg) {
+  if (msg.owner !== helpers.viewFormShowing) return;
+
+  if ($("#view-form-show-error-message").length !== 0) {
+    $("#view-form-show-error-message").remove();
+  }
+
+  if (!userFolders[msg.name]) {
+    $("#view-form-show-container").append("<div class='user-folder'>" + msg.name + "</div>");
+    userFolders[msg.name] = true;
+  }
+});
+
+socket.on('delete user folder', function(msg) {
+  if (msg.owner !== helpers.viewFormShowing) return;
+
+  $("#view-form-show-container .user-folder:contains('" + msg.name + "')").remove();
+  delete userFolders[msg.name];
+});
+
+socket.on('user folder empty', function(msg) {
+  if (msg !== helpers.viewFormShowing) return;
+
+  $("#view-form-show-container").html("<div id='view-form-show-error-message' class='alert alert-danger'>This user has no repositories or does not exist</div>");
+  userFolders = {};
+});

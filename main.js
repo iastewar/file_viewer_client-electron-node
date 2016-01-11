@@ -9,8 +9,6 @@ require('crash-reporter').start();
 var mainWindow = null;
 var loginWindow = null;
 var signupWindow = null;
-var connectWindow = null;
-var viewWindow = null;
 
 var titleBarStyle = 'default';
 var frame = false;
@@ -55,35 +53,13 @@ app.on('ready', function() {
 
     loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
 
-    connectWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 400,
-        width: 500,
-        show: false
-    });
-
-    connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
-
-    viewWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 400,
-        width: 500,
-        show: false
-    });
-
-    viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
-
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function() {
       mainWindow = null;
       if (process.platform !== 'darwin') {
         if (loginWindow) loginWindow.close();
         if (signupWindow) signupWindow.close();
-        if (connectWindow) connectWindow.close();
-        if (viewWindow) viewWindow.close();
         app.quit();
       }
     });
@@ -197,90 +173,6 @@ ipc.on('close-login-window', function () {
     if (loginWindow) {
         loginWindow.close();
     }
-});
-
-ipc.on('open-connect-window', function () {
-    connectWindow.show();
-
-    connectWindow.on('closed', function () {
-      if (mainWindow) {
-        connectWindow = new BrowserWindow({
-            titleBarStyle: titleBarStyle,
-            frame: frame,
-            height: 400,
-            width: 500,
-            show: false
-        });
-
-        connectWindow.loadURL('file://' + __dirname + '/app/views/connect.html');
-      } else {
-        connectWindow = null;
-      }
-    });
-});
-
-ipc.on('minimize-connect-window', function () {
-    connectWindow.minimize();
-});
-
-ipc.on('maximize-connect-window', function () {
-    connectWindow.maximize();
-});
-
-ipc.on('restore-connect-window', function () {
-    connectWindow.unmaximize();
-});
-
-ipc.on('close-connect-window', function () {
-    if (connectWindow) {
-        connectWindow.close();
-    }
-});
-
-ipc.on('open-view-window', function () {
-    viewWindow.show();
-
-    viewWindow.on('closed', function () {
-      if (mainWindow) {
-        viewWindow = new BrowserWindow({
-            titleBarStyle: titleBarStyle,
-            frame: frame,
-            height: 400,
-            width: 500,
-            show: false
-        });
-
-        viewWindow.loadURL('file://' + __dirname + '/app/views/view.html');
-      } else {
-        viewWindow = null;
-      }
-    });
-});
-
-ipc.on('minimize-view-window', function () {
-    viewWindow.minimize();
-});
-
-ipc.on('maximize-view-window', function () {
-    viewWindow.maximize();
-});
-
-ipc.on('restore-view-window', function () {
-    viewWindow.unmaximize();
-});
-
-ipc.on('close-view-window', function () {
-    if (viewWindow) {
-        viewWindow.close();
-    }
-});
-
-ipc.on('connecting', function(event, args) {
-  mainWindow.webContents.send('connecting', args);
-});
-
-ipc.on('viewing', function(event, args) {
-  mainWindow.webContents.send('viewing', args);
 });
 
 ipc.on('loggedin', function(event, username) {

@@ -1,10 +1,15 @@
-var socket = require('../socket');
+//var socket = require('../socket');
 var socketFunctions = require('../socket-functions');
 var ipc = require('electron').ipcRenderer;
 var remote = require('remote');
 var loginStatus = require('../login-status');
 var serverURL = require('../serverURL');
 var helpers = require('./helpers');
+
+if (!socketFunctions.socket) {
+  socketFunctions.connect(socket);
+}
+var socket = socketFunctions.socket;
 
 $(function() {
 
@@ -31,56 +36,109 @@ $(function() {
   }
 
   // toggle tabs with 'a' and 'd' keys
+  // $(document).on("keydown", function() {
+  //   if (event.keyCode === 65) {
+  //     var openTab = $(".active").find("a").html();
+  //     switch(openTab) {
+  //       case "View":
+  //         $("#view-tab").removeClass("active");
+  //         $("#view").removeClass("active");
+  //         $("#broadcast-tab").addClass("active");
+  //         $("#broadcast").addClass("active");
+  //         break;
+  //
+  //       case "Connect":
+  //         $("#connect-tab").removeClass("active");
+  //         $("#connect").removeClass("active");
+  //         $("#view-tab").addClass("active");
+  //         $("#view").addClass("active");
+  //         break;
+  //
+  //       case "Broadcast":
+  //         $("#broadcast-tab").removeClass("active");
+  //         $("#broadcast").removeClass("active");
+  //         $("#connect-tab").addClass("active");
+  //         $("#connect").addClass("active");
+  //         break;
+  //     }
+  //   } else if (event.keyCode === 68) {
+  //     var openTab = $(".active").find("a").html();
+  //     switch(openTab) {
+  //       case "View":
+  //         $("#view-tab").removeClass("active");
+  //         $("#view").removeClass("active");
+  //         $("#connect-tab").addClass("active");
+  //         $("#connect").addClass("active");
+  //         break;
+  //
+  //       case "Connect":
+  //         $("#connect-tab").removeClass("active");
+  //         $("#connect").removeClass("active");
+  //         $("#broadcast-tab").addClass("active");
+  //         $("#broadcast").addClass("active");
+  //         break;
+  //
+  //       case "Broadcast":
+  //         $("#broadcast-tab").removeClass("active");
+  //         $("#broadcast").removeClass("active");
+  //         $("#view-tab").addClass("active");
+  //         $("#view").addClass("active");
+  //         break;
+  //     }
+  //   }
+  // });
+
+  // prevent pressing enter from reloading page on input fields
   $(document).on("keydown", function() {
-    if (event.keyCode === 65) {
-      var openTab = $(".active").find("a").html();
-      switch(openTab) {
-        case "View":
-          $("#view-tab").removeClass("active");
-          $("#view").removeClass("active");
-          $("#broadcast-tab").addClass("active");
-          $("#broadcast").addClass("active");
-          break;
-
-        case "Connect":
-          $("#connect-tab").removeClass("active");
-          $("#connect").removeClass("active");
-          $("#view-tab").addClass("active");
-          $("#view").addClass("active");
-          break;
-
-        case "Broadcast":
-          $("#broadcast-tab").removeClass("active");
-          $("#broadcast").removeClass("active");
-          $("#connect-tab").addClass("active");
-          $("#connect").addClass("active");
-          break;
-      }
-    } else if (event.keyCode === 68) {
-      var openTab = $(".active").find("a").html();
-      switch(openTab) {
-        case "View":
-          $("#view-tab").removeClass("active");
-          $("#view").removeClass("active");
-          $("#connect-tab").addClass("active");
-          $("#connect").addClass("active");
-          break;
-
-        case "Connect":
-          $("#connect-tab").removeClass("active");
-          $("#connect").removeClass("active");
-          $("#broadcast-tab").addClass("active");
-          $("#broadcast").addClass("active");
-          break;
-
-        case "Broadcast":
-          $("#broadcast-tab").removeClass("active");
-          $("#broadcast").removeClass("active");
-          $("#view-tab").addClass("active");
-          $("#view").addClass("active");
-          break;
-      }
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      return false;
     }
+  });
+
+  $("#view-tab").on("click", function() {
+    $("#connect-form-container").hide();
+    $("#view-form-container").show();
+    if ($("#view-form").attr("data") === "showing") {
+      $("#forms-container").show();
+      $("#main-container").css("opacity", "0.3");
+      $("#empty-container").css("z-index", "50");
+    } else {
+      $("#forms-container").hide();
+      $("#main-container").css("opacity", "1");
+      $("#empty-container").css("z-index", "-50");
+    }
+  });
+
+  $("#connect-tab").on("click", function() {
+    $("#view-form-container").hide();
+    $("#connect-form-container").show();
+    if ($("#connect-form").attr("data") === "showing") {
+      $("#forms-container").show();
+      $("#main-container").css("opacity", "0.3");
+      $("#empty-container").css("z-index", "50");
+    } else {
+      $("#forms-container").hide();
+      $("#main-container").css("opacity", "1");
+      $("#empty-container").css("z-index", "-50");
+    }
+  });
+
+  $("#broadcast-tab").on("click", function() {
+    $("#forms-container").hide();
+    $("#main-container").css("opacity", "1");
+    $("#empty-container").css("z-index", "-50");
+  });
+
+  $("#empty-container").on("click", function() {
+      $("#forms-container").hide();
+      if ($(".active").find("a").html() === "View") {
+        $("#view-form").attr("data", "hidden");
+      } else if ($(".active").find("a").html() === "Connect") {
+        $("#connect-form").attr("data", "hidden");
+      }
+      $("#main-container").css("opacity", "1");
+      $(this).css("z-index", "-50");
   });
 
   $(".loginsignup").on("click", "#login", function() {

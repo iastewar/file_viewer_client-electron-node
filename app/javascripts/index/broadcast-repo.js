@@ -1,10 +1,15 @@
 var fs = require('fs');
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var socket = require('../socket');
+var socketFunctions = require('../socket-functions');
 var helpers = require('./helpers');
 var ipc = require('electron').ipcRenderer;
 var loginStatus = require('../login-status');
+
+if (!socketFunctions.socket) {
+  socketFunctions.connect(socket);
+}
+var socket = socketFunctions.socket;
 
 // seperator is "/" for mac and linux, and "\\" for windows
 var seperator = "/";
@@ -112,13 +117,13 @@ var broadcastBtn = function() {
 }
 
 $(function() {
-  $(document).on("keydown", function() {
-    if (event.keyCode === 13) {
-      if ($(".active").find("a").html() === "Broadcast") {
-        broadcastBtn();
-      }
-    }
-  });
+  // $(document).on("keydown", function() {
+  //   if (event.keyCode === 13) {
+  //     if ($(".active").find("a").html() === "Broadcast") {
+  //       broadcastBtn();
+  //     }
+  //   }
+  // });
 
   $("#broadcast-btn").on("click", broadcastBtn);
 

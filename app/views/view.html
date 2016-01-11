@@ -10,6 +10,8 @@
 
     <script>window.$ = window.jQuery = require('../../dependencies/jquery-2.1.4.js');</script>
     <script src="../../dependencies/bootstrap/js/bootstrap.min.js"></script>
+    <!-- <script src="http://52.34.2.212/socket.io/socket.io.js"></script> -->
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>require('../javascripts/view/view.js')</script>
 
   </head>
@@ -27,19 +29,24 @@
         <div id="messages" class="error-message alert alert-danger" style="display: none"></div>
 
         <!-- view form -->
-        <div>
+        <div id="form-container">
           <form id='view'>
             <div class="form-group">
                 <label>Owner</label>
                 <input type="text" class="form-control" name="owner" autofocus="autofocus">
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label>Name</label>
                 <input type="text" class="form-control" name="name">
-            </div>
+            </div> -->
             </form>
-            <button id="submitview" class="btn btn-warning btn-lg">View</button>
+            <button id="show" class="btn btn-warning btn-lg">Show</button>
+            <!-- <button id="submitview" class="btn btn-warning btn-lg">View</button> -->
             <button id="closeview" class="btn btn-danger btn-lg">Cancel</button>
+        </div>
+
+        <div id="show-container" style="display: none;">
+          <button id="back" class="btn btn-warning btn-lg">Back</button>
         </div>
 
     </div>
