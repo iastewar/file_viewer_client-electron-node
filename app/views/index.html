@@ -54,7 +54,7 @@
       <div class="tab-content" id="main-container">
         <div role="tabpanel" class="tab-pane active" id="view">
           <div class="main-header">
-            <h2 id="view-btn">View a Repository</h2>
+            <h2 id="view-btn">View Repository</h2>
           </div>
           <div id="view-messages" class="error-message"></div>
 
@@ -79,7 +79,7 @@
 
         <div role="tabpanel" class="tab-pane" id="connect">
           <div class="main-header">
-            <h2 id="connect-btn">Connect to a Repository</h2>
+            <h2 id="connect-btn">Connect to Repository</h2>
           </div>
           <div id="connect-messages" class="error-message"></div>
 
@@ -110,7 +110,7 @@
 
         <div role="tabpanel" class="tab-pane" id="broadcast">
           <div class="main-header">
-            <h2 id="broadcast-btn">Broadcast a Repository</h2>
+            <h2 id="broadcast-btn">Broadcast Repository</h2>
           </div>
           <div id="broadcast-messages" class="error-message"></div>
 
@@ -149,11 +149,10 @@
           <div id="view-form" data="hidden">
             <form>
               <div class="form-group">
-                <label>Owner</label>
-                <input type="text" class="form-control" name="owner">
+                <input type="text" class="form-control" name="owner" placeholder="username">
               </div>
             </form>
-            <button id="view-form-show" class="btn btn-warning btn-md">Show</button>
+            <button id="view-form-show" class="btn btn-md">Show</button>
           </div>
           <h3 id="view-form-show-header"></h3>
           <div id="view-form-show-container"></div>
@@ -163,11 +162,10 @@
           <div id="connect-form" data="hidden">
             <form>
               <div class="form-group">
-                <label>Owner</label>
-                <input type="text" class="form-control" name="owner">
+                <input type="text" class="form-control" name="owner" placeholder="username">
               </div>
             </form>
-            <button id="connect-form-show" class="btn btn-warning btn-md">Show</button>
+            <button id="connect-form-show" class="btn btn-md">Show</button>
           </div>
           <h3 id="connect-form-show-header"></h3>
           <div id="connect-form-show-container"></div>
