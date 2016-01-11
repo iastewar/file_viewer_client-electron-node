@@ -1,19 +1,9 @@
-var socketFunctions = require('../socket-functions');
+module.exports = function(helpers) {
+
 var React = require('react');
 var ReactDOM = require('react-dom');
-var ipc = require('electron').ipcRenderer;
-var helpers = require('./helpers');
 
-if (!socketFunctions.socket) {
-  socketFunctions.connect(socket);
-}
-var socket = socketFunctions.socket;
-
-// seperator is "/" for mac and linux, and "\\" for windows
-var seperator = "/";
-if (process.platform === 'win32') {
-  seperator = "\\"
-}
+var socket = helpers.socket;
 
 var userFolders = {};
 
@@ -231,37 +221,45 @@ var sendDirectoryError = function(msg) {
   }
 }
 
+var viewBtn = function() {
+  $("#connect-form-container").hide();
+  $("#forms-container").show();
+  $("#view-form").attr("data", "showing");
+  $("#view-form input[name='owner']").focus();
+  $("#main-container").css("opacity", "0.3");
+  $("#empty-container").css("z-index", "50");
+}
+
+var viewFormShow = function() {
+  var owner = $("#view-form input[name='owner']").val();
+  if (owner === "") return;
+  socket.emit('show user folders', owner);
+  if (helpers.viewFormShowing && helpers.viewFormShowing !== helpers.connectFormShowing) {
+    socket.emit('disconnect user folders', helpers.viewFormShowing);
+  }
+  helpers.viewFormShowing = owner;
+  userFolders = {};
+  $("#view-form input[name='owner']").val("");
+  $("#view-form-show-header").html(owner + "'s Repositories")
+  $("#view-form-show-container").show().html("");
+}
+
 $(function() {
-  // $(document).on("keydown", function() {
-  //   if (event.keyCode === 13) {
-  //     if ($(".active").find("a").html() === "View") {
-  //       ipc.send('open-view-window');
-  //     }
-  //   }
-  // });
-
-  $("#view-btn").on("click", function() {
-    $("#connect-form-container").hide();
-    $("#forms-container").show();
-    $("#view-form").attr("data", "showing");
-    $("#main-container").css("opacity", "0.3");
-    $("#empty-container").css("z-index", "50");
-  });
-
-  $("#view-form-show").on("click", function() {
-    var owner = $("#view-form input[name='owner']").val();
-    if (owner === "") return;
-    socket.emit('show user folders', owner);
-    if (helpers.viewFormShowing && helpers.viewFormShowing !== helpers.connectFormShowing) {
-      console.log(helpers.viewFormShowing + " " + helpers.connectFormShowing);
-      socket.emit('disconnect user folders', helpers.viewFormShowing);
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      if ($(".active").find("a").html() === "View") {
+        if ($("#view-form").attr("data") === "hidden") {
+          viewBtn();
+        } else {
+          viewFormShow();
+        }
+      }
     }
-    helpers.viewFormShowing = owner;
-    userFolders = {};
-    $("#view-form input[name='owner']").val("");
-    $("#view-form-show-header").html(owner + "'s Repositories")
-    $("#view-form-show-container").show().html("");
   });
+
+  $("#view-btn").on("click", viewBtn);
+
+  $("#view-form-show").on("click", viewFormShow);
 
   $("#view-form-show-container").on("click", ".user-folder", function() {
     console.log("trying to view " + helpers.viewFormShowing + "/" + $(this).html());
@@ -277,10 +275,10 @@ $(function() {
 
 
 socket.on('send file', function(msg){
-  if (seperator === "\\") {
+  if (helpers.separator === "\\") {
     msg.fileName = msg.fileName.replace(/\//g, '\\');
   }
-  var fileNameArray = msg.fileName.split(seperator);
+  var fileNameArray = msg.fileName.split(helpers.separator);
   if (msg.owner + "/" + fileNameArray[0] !== helpers.viewServerFolder) {
     console.log(msg.owner + "/" + fileNameArray[0] + " is not equal to viewing folder " + helpers.viewServerFolder);
     return;
@@ -336,3 +334,5 @@ socket.on('user folder empty', function(msg) {
   $("#view-form-show-container").html("<div id='view-form-show-error-message' class='alert alert-danger'>This user has no repositories or does not exist</div>");
   userFolders = {};
 });
+
+}

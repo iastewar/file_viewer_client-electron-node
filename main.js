@@ -53,7 +53,7 @@ app.on('ready', function() {
 
     loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', function() {
       mainWindow = null;

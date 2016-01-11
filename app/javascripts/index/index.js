@@ -1,18 +1,31 @@
-//var socket = require('../socket');
+module.exports = function(maxFileSize) {
+
+var serverURL = require('../serverURL');
 var socketFunctions = require('../socket-functions');
 var ipc = require('electron').ipcRenderer;
-var remote = require('remote');
-var loginStatus = require('../login-status');
-var serverURL = require('../serverURL');
 var helpers = require('./helpers');
+var viewRepo = require('./view-repo');
+var connectRepo = require('./connect-repo');
+var broadcastRepo = require('./broadcast-repo');
 
-if (!socketFunctions.socket) {
-  socketFunctions.connect(socket);
+helpers.maxFileSize = maxFileSize;
+
+socketFunctions.connect();
+helpers.socket = socketFunctions.socket;
+
+// separator is "/" for mac and linux, and "\\" for windows
+helpers.separator = "/";
+if (process.platform === 'win32') {
+  helpers.separator = "\\"
 }
-var socket = socketFunctions.socket;
+
+broadcastRepo(helpers);
+connectRepo(helpers);
+viewRepo(helpers);
 
 $(function() {
 
+  // create borderless window for windows and linux
   if (process.platform !== 'darwin') {
     $("#window").append(
       "<div id='window-minimize-btn' class='window-btn'>\u2500</div>" +
@@ -101,6 +114,7 @@ $(function() {
     $("#view-form-container").show();
     if ($("#view-form").attr("data") === "showing") {
       $("#forms-container").show();
+      $("#view-form input[name='owner']").focus();
       $("#main-container").css("opacity", "0.3");
       $("#empty-container").css("z-index", "50");
     } else {
@@ -115,6 +129,7 @@ $(function() {
     $("#connect-form-container").show();
     if ($("#connect-form").attr("data") === "showing") {
       $("#forms-container").show();
+      $("#connect-form input[name='owner']").focus();
       $("#main-container").css("opacity", "0.3");
       $("#empty-container").css("z-index", "50");
     } else {
@@ -162,11 +177,13 @@ $(function() {
     helpers.broadcastingRepos = {};
 
     $.get(serverURL + "/logout");
-    socketFunctions.resetSocket(socket);
-    loginStatus.loggedin = false;
+    socketFunctions.resetSocket();
+    helpers.loggedIn = false;
 
     $("#broadcastingRepos").html("");
     $("#broadcastingReposHead").html("");
+    helpers.numBroadcastingRepos = 0;
+    $("#broadcast-help").show();
 
     $(".loginsignup").html(
 
@@ -185,8 +202,8 @@ $(function() {
 
 
 ipc.on('loggedin', function(event, username) {
-  socketFunctions.resetSocket(socket);
-  loginStatus.loggedin = true;
+  socketFunctions.resetSocket();
+  helpers.loggedIn = true;
 
   $(".loginsignup").html(
 
@@ -200,6 +217,8 @@ ipc.on('loggedin', function(event, username) {
   );
 });
 
-socket.on('log in', function() {
+helpers.socket.on('log in', function() {
   console.log("not logged in yet")
 });
+
+}

@@ -1,25 +1,12 @@
+module.exports = function(helpers) {
+
 var fs = require('fs');
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var socketFunctions = require('../socket-functions');
-var helpers = require('./helpers');
 var ipc = require('electron').ipcRenderer;
-var loginStatus = require('../login-status');
 
-if (!socketFunctions.socket) {
-  socketFunctions.connect(socket);
-}
-var socket = socketFunctions.socket;
-
-// seperator is "/" for mac and linux, and "\\" for windows
-var seperator = "/";
-if (process.platform === 'win32') {
-  seperator = "\\"
-}
-
-var maxFileSize = 20971520;
-
-var numRepos = 0;
+var socket = helpers.socket;
+helpers.numBroadcastingRepos = 0;
 
 var addRow = function(directoryName) {
   $("#broadcastingRepos").append(
@@ -32,7 +19,7 @@ var addRow = function(directoryName) {
 }
 
 var addHeader = function() {
-  $("#broadcastingReposHead").append(
+  $("#broadcastingReposHead").html(
     "<tr>" +
       "<th width='80%'>Name</th>" +
       "<th width='20%'>Stop Broadcasting?</th>" +
@@ -44,9 +31,41 @@ var removeHeader = function() {
   $("#broadcastingReposHead").html("");
 }
 
-
 var broadcastRepo = function() {
   dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
+
+    var watchOnEvent = function(event, fileName) {
+      fs.stat(directoryNames[0] + helpers.separator + fileName, function(err, stats) {
+        if (helpers.broadcastingRepos[directoryNames[0]].gitignore && helpers.broadcastingRepos[directoryNames[0]].gitignore.denies(fileName)) {
+          console.log("denied " + fileName);
+          return;
+        }
+        if (err) {
+          // nonexistent so delete from server
+          helpers.deleteFileFromServer(directoryNames[0], fileName);
+        } else if (stats.isFile() && stats.size > helpers.maxFileSize) {
+          $("#broadcast-messages").html(
+            "<div class='alert alert-danger'>" +
+            "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+            fileName + " is over " + helpers.maxFileSize / 1048576 + "MB and can't be sent." +
+            "</div>"
+          );
+        } else {
+          // send to server
+          if (stats.isFile()) {
+            fs.readFile(directoryNames[0] + helpers.separator + fileName, function(err, data) {
+              if (err) {
+                console.log(err);
+              }
+              helpers.sendFileToServer(directoryNames[0], fileName, data);
+            });
+          } else {
+            helpers.sendDirectory(directoryNames[0], fileName);
+          }
+        }
+      });
+    }
+
     if (!directoryNames) {
       return;
     } else {
@@ -64,52 +83,22 @@ var broadcastRepo = function() {
 
         helpers.sendDirectory(directoryNames[0], "");
 
-        if (numRepos === 0) {
+        if (helpers.numBroadcastingRepos === 0) {
           addHeader();
           $("#broadcast-help").hide();
         }
-        numRepos++;
+        helpers.numBroadcastingRepos++;
 
         addRow(directoryNames[0]);
 
-        helpers.broadcastingRepos[directoryNames[0]].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, function(event, fileName) {
-          fs.stat(directoryNames[0] + seperator + fileName, function(err, stats) {
-            if (helpers.broadcastingRepos[directoryNames[0]].gitignore && helpers.broadcastingRepos[directoryNames[0]].gitignore.denies(fileName)) {
-              console.log("denied " + fileName);
-              return;
-            }
-            if (err) {
-              // nonexistent so delete from server
-              helpers.deleteFileFromServer(directoryNames[0], fileName);
-            } else if (stats.isFile() && stats.size > maxFileSize) {
-              $("#broadcast-messages").html(
-                "<div class='alert alert-danger'>" +
-                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-                fileName + " is over " + maxFileSize / 1048576 + "MB and can't be sent." +
-                "</div>"
-              );
-            } else {
-              // send to server
-              if (stats.isFile()) {
-                fs.readFile(directoryNames[0] + seperator + fileName, function(err, data) {
-                  if (err) {
-                    console.log(err);
-                  }
-                  helpers.sendFileToServer(directoryNames[0], fileName, data);
-                });
-              } else {
-                helpers.sendDirectory(directoryNames[0], fileName);
-              }
-            }
-          });
-        });
+        helpers.broadcastingRepos[directoryNames[0]].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
       }
     }
   });
 }
 
 var broadcastBtn = function() {
-  if (loginStatus.loggedin) {
+  if (helpers.loggedIn) {
     broadcastRepo();
   } else {
     ipc.send('open-login-window');
@@ -117,13 +106,13 @@ var broadcastBtn = function() {
 }
 
 $(function() {
-  // $(document).on("keydown", function() {
-  //   if (event.keyCode === 13) {
-  //     if ($(".active").find("a").html() === "Broadcast") {
-  //       broadcastBtn();
-  //     }
-  //   }
-  // });
+  $(document).on("keydown", function() {
+    if (event.keyCode === 13) {
+      if ($(".active").find("a").html() === "Broadcast") {
+        broadcastBtn();
+      }
+    }
+  });
 
   $("#broadcast-btn").on("click", broadcastBtn);
 
@@ -137,7 +126,7 @@ $(function() {
       delete helpers.broadcastingRepos[broadcastName];
     }
 
-    var arr = broadcastName.split(seperator);
+    var arr = broadcastName.split(helpers.separator);
 
     console.log('deleting folder from server: ' + arr[arr.length - 1]);
 
@@ -145,11 +134,11 @@ $(function() {
 
     $(this).parent().parent().remove();
 
-    if (numRepos === 1) {
+    if (helpers.numBroadcastingRepos === 1) {
       removeHeader();
       $("#broadcast-help").show();
     }
-    numRepos--;
+    helpers.numBroadcastingRepos--;
   })
 })
 
@@ -171,3 +160,5 @@ socket.on('max directory size allowed', function(msg) {
     "</div>"
   );
 });
+
+}
