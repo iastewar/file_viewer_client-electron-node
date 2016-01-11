@@ -316,7 +316,7 @@ socket.on('user folder', function(msg) {
   }
 
   if (!userFolders[msg.name]) {
-    $("#view-form-show-container").append("<div class='user-folder'><span class='fa fa-folder' style='margin-right: 15px;'></span>" + msg.name + "</div>");
+    $("#view-form-show-container").append("<div class='user-folder'><span class='fa fa-folder' style='margin-right: 5px;'></span>" + msg.name + "</div>");
     userFolders[msg.name] = true;
   }
 });
