@@ -198,23 +198,13 @@ $(function() {
   })
 });
 
-// args is an object with name, owner, and storingTo
-// ipc.on('connecting', function(event, args) {
-//   console.log("connecting to " + args.owner + "/" + args.name);
-//
-//   var serverFolder = args.owner + "/" + args.name;
-//
-//   socket.emit('connect folder', serverFolder);
-//   connecting[serverFolder] = args.storingTo;
-// });
-
 socket.on('connected', function(msg) {
-  if (connecting[msg]) {
-    console.log(msg);
-    helpers.connectedRepos[msg] = connecting[msg];
-    arr = msg.split("/");
+  if (connecting[msg.name]) {
+    console.log(msg.name);
+    helpers.connectedRepos[msg.name] = connecting[msg.name];
+    arr = msg.name.split("/");
 
-    addRow(arr[0], arr[1], connecting[msg]);
+    addRow(arr[0], arr[1], connecting[msg.name]);
 
     if (numRepos === 0) {
       addHeader();
@@ -223,7 +213,7 @@ socket.on('connected', function(msg) {
     numRepos++;
 
 
-    delete connecting[msg];
+    delete connecting[msg.name];
   }
 });
 

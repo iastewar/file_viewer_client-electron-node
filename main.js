@@ -80,6 +80,15 @@ app.on('activate', function() {
     mainWindow.webContents.on('did-finish-load', function() {
       mainWindow.show();
     });
+
+    mainWindow.on('closed', function() {
+      mainWindow = null;
+      if (process.platform !== 'darwin') {
+        if (loginWindow) loginWindow.close();
+        if (signupWindow) signupWindow.close();
+        app.quit();
+      }
+    });
   }
 });
 

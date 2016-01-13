@@ -8,6 +8,8 @@ var socket = helpers.socket;
 var userFolders = {};
 
 var tryingToView = false;
+var filesRetrieved = 0;
+var totalNumberOfFiles;
 
 var TreeNode = React.createClass({
   getInitialState: function() {
@@ -287,22 +289,37 @@ socket.on('send file', function(msg){
     removeFromFileTree(fileTree, fileNameArray, fileNameArray.length, 0);
   } else {
     addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, msg.fileName, ab2str(msg.fileContents));
-    ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
+    if (filesRetrieved >= totalNumberOfFiles - 1) {
+      ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
+    } else {
+      filesRetrieved++;
+      $("#progress-bar").progressbar("value", filesRetrieved);
+    }
   }
 });
 
 socket.on('connected', function(msg) {
   if (tryingToView) {
     fileTree = {};
-    var arr = msg.split("/");
+    var arr = msg.name.split("/");
     $("#view-header").html(arr[0]);
 
     if (helpers.viewServerFolder && !helpers.connectedRepos[helpers.viewServerFolder]) {
       socket.emit('disconnect folder', helpers.viewServerFolder)
     }
-    helpers.viewServerFolder = msg;
+    helpers.viewServerFolder = msg.name;
     tryingToView = false;
     $("#view-help").hide();
+
+    filesRetrieved = 0;
+    totalNumberOfFiles = msg.numberOfFiles;
+    $("#viewingRepos").html(
+      "<div id='loading-view'>" +
+      "<div>Loading...</div>" +
+      "<div id='progress-bar'></div>" +
+      "</div>"
+    );
+    $("#progress-bar").progressbar({max: totalNumberOfFiles})
   }
 });
 

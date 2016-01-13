@@ -552,3 +552,10 @@ table {
   background-color: "#454b54";
   border: 1px solid #aaaaaa;
 }
+
+#loading-view {
+  position: absolute;
+  top: 85px;
+  left: 25%;
+  right: 25%;
+}
