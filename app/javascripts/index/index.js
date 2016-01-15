@@ -23,6 +23,8 @@ broadcastRepo(helpers);
 connectRepo(helpers);
 viewRepo(helpers);
 
+helpers.socket.emit('is logged in');
+
 $(function() {
 
   // create borderless window for windows and linux
@@ -219,6 +221,23 @@ ipc.on('loggedin', function(event, username) {
 
 helpers.socket.on('log in', function() {
   console.log("not logged in yet")
+});
+
+helpers.socket.on('is logged in', function(username) {
+  if (username) {
+    helpers.loggedIn = true;
+
+    $(".loginsignup").html(
+
+      "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>" +
+        username + " <span class='caret'></span>" +
+      "</button>" +
+      "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>" +
+        "<li><a id='logout' href='javascript:void(0);'>Log Out</a></li>" +
+      "</ul>"
+
+    );
+  }
 });
 
 }
