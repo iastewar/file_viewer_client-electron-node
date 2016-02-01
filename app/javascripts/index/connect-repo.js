@@ -248,4 +248,12 @@ socket.on('user folder empty', function(msg) {
   userFolders = {};
 });
 
+socket.on('resend folders', function() {
+  helpers.connectedRepos = {};
+  $("#connectedRepos").html("");
+  removeHeader();
+  $("#connect-help").show();
+  numRepos = 0;
+});
+
 }

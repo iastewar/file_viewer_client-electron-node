@@ -161,4 +161,12 @@ socket.on('max directory size allowed', function(msg) {
   );
 });
 
+socket.on('resend folders', function() {
+  for (var key in helpers.broadcastingRepos) {
+    if (helpers.broadcastingRepos.hasOwnProperty(key)) {
+      helpers.sendDirectory(key, "");
+    }
+  }
+});
+
 }
