@@ -94,6 +94,7 @@ helpers.rmdirRec = function(directoryName, subDirectories, callback) {
 
 // converts an ArrayBuffer to a Buffer
 helpers.toBuffer = function(ab) {
+    if (!ab) return "";
     var buffer = new Buffer(ab.byteLength);
     var view = new Uint8Array(ab);
     for (var i = 0; i < buffer.length; ++i) {
@@ -112,7 +113,7 @@ helpers.sendFileToServer = function(directoryName, fileName, data) {
     fileName = fileName.replace(/\\/g, '/');
   }
 
-  helpers.socket.emit('send file', {fileName: currentDir + '/' + fileName, fileContents: data});
+  helpers.socket.emit('send file', JSON.stringify({fileName: currentDir + '/' + fileName, fileContents: data}));
 }
 
 // deletes a file from the server where directoryName/fileName is the path of the file,
@@ -124,19 +125,20 @@ helpers.deleteFileFromServer = function(directoryName, fileName) {
     fileName = fileName.replace(/\\/g, '/');
   }
 
-  helpers.socket.emit('send file', {fileName: currentDir + '/' + fileName, deleted: true});
+  helpers.socket.emit('send file', JSON.stringify({fileName: currentDir + '/' + fileName, deleted: true}));
 }
 
 
 helpers.sendDirectory = function(directoryName, subDirectories) {
   fs.readdir(directoryName + helpers.separator + subDirectories, function(err, fileNames) {
     if (err) {
-      $("#broadcast-messages").html(
-        "<div class='alert alert-danger'>" +
-        "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-        "Error: folder contains too many files and the broadcast may have failed. Try creating a .gitignore file." +
-        "</div>"
-      );
+      return;
+      // $("#broadcast-messages").html(
+      //   "<div class='alert alert-danger'>" +
+      //   "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+      //   "Error: folder contains too many files and the broadcast may have failed. Try creating a .gitignore file." +
+      //   "</div>"
+      // );
     }
 
     var sendTheFiles = function() {

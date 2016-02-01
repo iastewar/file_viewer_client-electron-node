@@ -13,6 +13,9 @@ var connecting = {};
 var numRepos = 0;
 
 var sendFile = function(msg) {
+  msg = JSON.parse(msg);
+  if (msg.fileContents) msg.fileContents = new Uint8Array(msg.fileContents.data).buffer;
+
   if (helpers.separator === "\\") {
     msg.fileName = msg.fileName.replace(/\//g, '\\');
   }

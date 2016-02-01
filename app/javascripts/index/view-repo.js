@@ -277,6 +277,9 @@ $(function() {
 
 
 socket.on('send file', function(msg){
+  msg = JSON.parse(msg);
+  if (msg.fileContents) msg.fileContents = new Uint8Array(msg.fileContents.data).buffer;
+
   if (helpers.separator === "\\") {
     msg.fileName = msg.fileName.replace(/\//g, '\\');
   }
