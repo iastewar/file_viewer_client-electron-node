@@ -90,7 +90,50 @@ var FileView = React.createClass({
     var domNode = ReactDOM.findDOMNode(this);
     var nodes = domNode.querySelectorAll('pre code');
     for (var i = 0; i < nodes.length; i++) {
-      nodes[i].className = "";
+      var fileNameArray = nodes[i].className.split(".");
+      if (fileNameArray.length > 1) {
+        var ext = fileNameArray[fileNameArray.length - 1];
+        switch (ext) {
+          case "rb":
+            nodes[i].className = "rb";
+            break;
+          case "yml":
+            nodes[i].className = "yml";
+            break;
+          case "js":
+            nodes[i].className = "js";
+            break;
+          case "java":
+            nodes[i].className = "java";
+            break;
+          case "css":
+            nodes[i].className = "css";
+            break;
+          case "cs":
+            nodes[i].className = "cs";
+            break;
+          case "cpp":
+          case "c":
+          case "h":
+            nodes[i].className = "cpp";
+            break;
+          case "coffee":
+            nodes[i].className = "coffee";
+            break;
+          case "http":
+            nodes[i].className = "http";
+            break;
+          case "erb":
+            nodes[i].className = "erb";
+            break;
+          case "json":
+            nodes[i].className = "json";
+            break;
+          default:
+            nodes[i].className = "";
+        }
+      }
+
       hljs.highlightBlock(nodes[i]);
     }
   },
@@ -140,7 +183,7 @@ var FileView = React.createClass({
               </div>
             </div>
             <div id="fileContents">
-              <pre><div className="lines">{lineNumbers}</div><code>{this.state.fileContents}</code></pre>
+              <pre><div className="lines">{lineNumbers}</div><code className={this.state.fileName}>{this.state.fileContents}</code></pre>
             </div>
           </div>
   }
