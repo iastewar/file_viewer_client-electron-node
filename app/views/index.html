@@ -20,8 +20,17 @@
   </head>
   <body>
     <div class="container">
+      <!-- this is to make sure the stop button is loaded at the start -->
+      <span id="stop-btn-loader" class='fa fa-stop'></span>
+
+      <div id="new-version" style="display: none;">
+        <div>
+          A new version is available: <span id="new-version-number"></span>
+        </div>
+      </div>
+
       <div id="window">
-        <div id="window-title">CodeMirror</div>
+        <div id="window-title">CodeMirror <span id="version-number"></span></div>
       </div>
 
       <div class="row" id="header">
@@ -130,6 +139,10 @@
                 the exact same format as a normal .gitignore file for the Git version control system.
               </p>
             </div>
+          </div>
+
+          <div id="broadcast-stats">
+            Files: <span id="broadcast-stats-files">0</span>, Size: <span id="broadcast-stats-size">0.00</span>MB
           </div>
 
           <div class="scrollTableContainer">

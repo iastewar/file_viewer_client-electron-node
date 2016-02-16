@@ -1,4 +1,4 @@
-module.exports = function(maxFileSize) {
+module.exports = function(maxFileSize, version) {
 
 var serverURL = require('../serverURL');
 var socketFunctions = require('../socket-functions');
@@ -24,6 +24,8 @@ connectRepo(helpers);
 viewRepo(helpers);
 
 $(function() {
+
+  $("#version-number").html(version);
 
   // create borderless window for windows and linux
   if (process.platform !== 'darwin') {
@@ -196,6 +198,9 @@ $(function() {
       "</ul>"
 
     );
+
+    $("#broadcast-stats-files").html("0");
+    $("#broadcast-stats-size").html("0.00");
   });
 
 });
@@ -234,6 +239,13 @@ helpers.socket.on('is logged in', function(username) {
     "</ul>"
 
   );
+});
+
+helpers.socket.on('client version', function(msg) {
+  if (msg !== version) {
+    $("#new-version-number").html(msg);
+    $("#new-version").show();
+  }
 });
 
 }

@@ -169,4 +169,9 @@ socket.on('resend folders', function() {
   }
 });
 
+socket.on('user stats', function(msg) {
+  $("#broadcast-stats-files").html(msg.totalNumberOfFiles);
+  $("#broadcast-stats-size").html((msg.totalDirectorySize / 1048576).toFixed(2));
+});
+
 }

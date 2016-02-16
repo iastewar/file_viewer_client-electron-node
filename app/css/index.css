@@ -559,3 +559,33 @@ table {
   left: 25%;
   right: 25%;
 }
+
+#stop-btn-loader {
+  z-index: -999;
+  left: 50px;
+  top: 100px;
+  position: absolute;
+}
+
+#new-version {
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  z-index: 9999;
+}
+
+#new-version div {
+  position: relative;
+  left: -50%;
+  background-color: greenyellow;
+  color: black;
+  padding: 9px;
+  border-radius: 50px;
+  margin: 10px;
+}
+
+#broadcast-stats {
+  position: absolute;
+  left: 15px;
+  top: 1px;
+}

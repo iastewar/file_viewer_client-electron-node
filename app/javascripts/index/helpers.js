@@ -171,10 +171,17 @@ helpers.sendDirectory = function(directoryName, subDirectories) {
               if (fileName !== ".git") {
                 helpers.sendDirectory(directoryName, subDirs);
               }
-            } else {
-              fs.readFile(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, data) {
-                helpers.sendFileToServer(directoryName, subDirs, data);
-              });
+            } else if (stats.isFile()) {
+              var readFile = function() {
+                fs.readFile(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, data) {
+                  if (err) {
+                    readFile();
+                  } else {
+                    helpers.sendFileToServer(directoryName, subDirs, data);
+                  }
+                });
+              }
+              readFile();
             }
           }
         });
