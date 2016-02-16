@@ -151,34 +151,32 @@ var fileTree = {};
 var addToFileTree = function(fileTree, fileNameArray, length, index, fileName, fileContents) {
   fileTree.name = fileNameArray[index];
   if (index === length - 1) {
+    if (fileTree.fileContents === fileContents) {
+      return null;
+    }
     fileTree.fileContents = fileContents;
     fileTree.fullName = fileName;
-    return;
+    return true;
   }
   if (!fileTree.childNodes) {
     fileTree.childNodes = [{name: fileNameArray[index + 1]}];
-    addToFileTree(fileTree.childNodes[0], fileNameArray, length, index + 1, fileName, fileContents);
+    return addToFileTree(fileTree.childNodes[0], fileNameArray, length, index + 1, fileName, fileContents);
   } else {
-    var flag = false;
     var childrenLength = fileTree.childNodes.length;
     for (var i = 0; i < childrenLength; i++) {
       if (fileNameArray[index + 1] === fileTree.childNodes[i].name) {
-        addToFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1, fileName, fileContents);
-        flag = true;
+        return addToFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1, fileName, fileContents);
       }
     }
-    if (!flag) {
-      fileTree.childNodes.push({name: fileNameArray[index + 1]});
-      addToFileTree(fileTree.childNodes[fileTree.childNodes.length - 1], fileNameArray, length, index + 1, fileName, fileContents);
-    }
+    fileTree.childNodes.push({name: fileNameArray[index + 1]});
+    return addToFileTree(fileTree.childNodes[fileTree.childNodes.length - 1], fileNameArray, length, index + 1, fileName, fileContents);
   }
 }
 
 var removeFromFileTree = function(fileTree, fileNameArray, length, index) {
   if (fileTree.name !== fileNameArray[index]) {
-    return false;
+    return null;
   }
-  var flag = false;
   var childrenLength = fileTree.childNodes.length;
   for (var i = 0; i < childrenLength; i++) {
     if (fileNameArray[index + 1] === fileTree.childNodes[i].name) {
@@ -186,13 +184,10 @@ var removeFromFileTree = function(fileTree, fileNameArray, length, index) {
         fileTree.childNodes.splice(i, 1);
         return true;
       }
-      removeFromFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1);
-      flag = true;
+      return removeFromFileTree(fileTree.childNodes[i], fileNameArray, length, index + 1);
     }
   }
-  if (!flag) {
-    return false;
-  }
+  return null;
 }
 
 var ab2str = function(buffer) {
@@ -288,16 +283,18 @@ socket.on('send file', function(msg){
     console.log(msg.owner + "/" + fileNameArray[0] + " is not equal to viewing folder " + helpers.viewServerFolder);
     return;
   }
+  var changed;
   if (msg.deleted) {
-    removeFromFileTree(fileTree, fileNameArray, fileNameArray.length, 0);
+    changed = removeFromFileTree(fileTree, fileNameArray, fileNameArray.length, 0);
   } else {
-    addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, msg.fileName, ab2str(msg.fileContents));
-    if (filesRetrieved >= totalNumberOfFiles - 1) {
-      ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
-    } else {
-      filesRetrieved++;
-      $("#progress-bar").progressbar("value", filesRetrieved);
-    }
+    changed = addToFileTree(fileTree, fileNameArray, fileNameArray.length, 0, msg.fileName, ab2str(msg.fileContents));
+  }
+
+  if (changed && filesRetrieved >= totalNumberOfFiles - 1) {
+    ReactDOM.render(<FileView node={fileTree} />, document.getElementById('viewingRepos'));
+  } else {
+    filesRetrieved++;
+    $("#progress-bar").progressbar("value", filesRetrieved);
   }
 });
 
