@@ -565,6 +565,7 @@ table {
   left: 50px;
   top: 100px;
   position: absolute;
+  opacity: 0.0;
 }
 
 #new-version {
