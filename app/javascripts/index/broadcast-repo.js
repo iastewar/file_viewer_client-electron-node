@@ -35,6 +35,13 @@ var broadcastRepo = function() {
   dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
 
     var watchOnEvent = function(event, fileName) {
+      // check if fileName contains .git
+      var fileNameArray = fileName.split(helpers.separator);
+      var length = fileNameArray.length;
+      for (var i = 0; i < length; i++) {
+        if (fileNameArray[i] === ".git") return;
+      }
+
       fs.stat(directoryNames[0] + helpers.separator + fileName, function(err, stats) {
         if (helpers.broadcastingRepos[directoryNames[0]].gitignore && helpers.broadcastingRepos[directoryNames[0]].gitignore.denies(fileName)) {
           console.log("denied " + fileName);
@@ -60,7 +67,9 @@ var broadcastRepo = function() {
               helpers.sendFileToServer(directoryNames[0], fileName, data);
             });
           } else {
-            helpers.sendDirectory(directoryNames[0], fileName);
+            if (fileName !== ".git") {
+              helpers.sendDirectory(directoryNames[0], fileName);
+            }
           }
         }
       });
