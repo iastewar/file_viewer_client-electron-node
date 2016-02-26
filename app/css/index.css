@@ -421,6 +421,8 @@ table {
 }
 
 .stop-btn {
+  margin-top: 5px;
+  margin-bottom: 5px;
   border-radius: 50px;
   height: 50px;
   width: 50px;

@@ -8,14 +8,53 @@ var ipc = require('electron').ipcRenderer;
 var socket = helpers.socket;
 helpers.numBroadcastingRepos = 0;
 
-var addRow = function(directoryName) {
+var resetBroadcastRows = function() {
+  var directoryNameArray = [];
+  for (var key in helpers.broadcastingRepos) {
+    if (helpers.broadcastingRepos.hasOwnProperty(key)) {
+      directoryNameArray.push(key);
+    }
+  }
+
+  directoryNameArray.forEach(function(chosenDirectoryName) {
+    $("#broadcast-loading-bar-container-" + chosenDirectoryName).html(
+      "<div>broadcasting...</div>" +
+      "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>"
+    );
+    $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
+
+    $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-files").html("0");
+    $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-size").html("0.00");
+
+    helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles = 0;
+
+    // let server know we are sending a directory
+    socket.emit('send folder', chosenDirectoryName);
+
+    helpers.sendDirectory(helpers.broadcastingRepos[chosenDirectoryName].fullDirectoryName, "", chosenDirectoryName, function(err) {
+      // let server know entire directory has been sent
+      socket.emit('sent folder', chosenDirectoryName);
+    });
+  });
+}
+
+var addRow = function(directoryName, chosenDirectoryName) {
   $("#broadcastingRepos").append(
   "<tr>" +
-    "<td class='broadcastName' width='80%'>" + directoryName + "</td>" +
+    "<td id='broadcast-name-" + chosenDirectoryName + "' class='broadcastName' width='50%'>" + directoryName + "</td>" +
+    "<td id='broadcast-loading-bar-container-" + chosenDirectoryName + "' width='20%'>" +
+      "<div>broadcasting...</div>" +
+      "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>" +
+    "</td>" +
+    "<td id='broadcast-stats-" + chosenDirectoryName + "' width='10%'>" +
+      "<div>Files: <span class='broadcast-stats-files'>0</span></div>" +
+      "<div>Size: <span class='broadcast-stats-size'>0.00</span>MB</div>" +
+    "</td>" +
     "<td width='20%'><div class='btn btn-danger stopBroadcasting stop-btn'><span class='fa fa-stop'></span></div></td>" +
   "</tr>"
-
   );
+
+  $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
 }
 
 var addHeader = function() {
@@ -33,6 +72,8 @@ var removeHeader = function() {
 
 var broadcastRepo = function() {
   dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
+    var directoryNameArray = directoryNames[0].split(helpers.separator);
+    var chosenDirectoryName = directoryNameArray[directoryNameArray.length - 1];
 
     var watchOnEvent = function(event, fileName) {
       // check if fileName contains .git
@@ -43,7 +84,7 @@ var broadcastRepo = function() {
       }
 
       fs.stat(directoryNames[0] + helpers.separator + fileName, function(err, stats) {
-        if (helpers.broadcastingRepos[directoryNames[0]].gitignore && helpers.broadcastingRepos[directoryNames[0]].gitignore.denies(fileName)) {
+        if (helpers.broadcastingRepos[chosenDirectoryName].gitignore && helpers.broadcastingRepos[chosenDirectoryName].gitignore.denies(fileName)) {
           console.log("denied " + fileName);
           return;
         }
@@ -78,19 +119,18 @@ var broadcastRepo = function() {
     if (!directoryNames) {
       return;
     } else {
-      if (helpers.broadcastingRepos[directoryNames[0]]) {
+      if (helpers.broadcastingRepos[chosenDirectoryName]) {
         $("#broadcast-messages").html(
           "<div class='alert alert-danger'>" +
           "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-          "The repository " + directoryNames[0] + " is already being broadcasted" +
+          "The repository " + chosenDirectoryName + " is already being broadcasted" +
           "</div>"
         );
       } else {
         console.log("Listening to " + directoryNames[0]);
 
-        helpers.broadcastingRepos[directoryNames[0]] = {sentDirectory: false};
-
-        helpers.sendDirectory(directoryNames[0], "");
+        // let server know we are sending a directory
+        socket.emit('send folder', chosenDirectoryName);
 
         if (helpers.numBroadcastingRepos === 0) {
           addHeader();
@@ -98,9 +138,17 @@ var broadcastRepo = function() {
         }
         helpers.numBroadcastingRepos++;
 
-        addRow(directoryNames[0]);
+        addRow(directoryNames[0], chosenDirectoryName);
 
-        helpers.broadcastingRepos[directoryNames[0]].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
+        // totalInitialFiles is for the loading bar displaying when the folder is first uploaded to the server
+        helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0};
+
+        helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, function(err) {
+          // let server know entire directory has been sent
+          socket.emit('sent folder', chosenDirectoryName);
+        });
+
+        helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
       }
     }
   });
@@ -127,19 +175,19 @@ $(function() {
 
   $("#broadcastingRepos").on("click", ".stopBroadcasting", function() {
     var broadcastName = $(this).parent().parent().find(".broadcastName").html()
+    var arr = broadcastName.split(helpers.separator);
+    var chosenDirectoryName = arr[arr.length - 1];
 
-    if (helpers.broadcastingRepos[broadcastName]) {
-      if (helpers.broadcastingRepos[broadcastName].watcher) {
-        helpers.broadcastingRepos[broadcastName].watcher.close();
+    if (helpers.broadcastingRepos[chosenDirectoryName]) {
+      if (helpers.broadcastingRepos[chosenDirectoryName].watcher) {
+        helpers.broadcastingRepos[chosenDirectoryName].watcher.close();
       }
-      delete helpers.broadcastingRepos[broadcastName];
+      delete helpers.broadcastingRepos[chosenDirectoryName];
     }
 
-    var arr = broadcastName.split(helpers.separator);
+    console.log('deleting folder from server: ' + chosenDirectoryName);
 
-    console.log('deleting folder from server: ' + arr[arr.length - 1]);
-
-    socket.emit('delete folder', arr[arr.length - 1]);
+    socket.emit('delete folder', chosenDirectoryName);
 
     $(this).parent().parent().remove();
 
@@ -148,8 +196,22 @@ $(function() {
       $("#broadcast-help").show();
     }
     helpers.numBroadcastingRepos--;
-  })
-})
+  });
+});
+
+socket.on('directory stats', function(msg) {
+  if ($("#broadcast-progress-bar-" + msg.directoryName).length !== 0) {
+    $("#broadcast-progress-bar-" + msg.directoryName).progressbar("value", msg.numberOfFiles);
+  }
+  var sizeInMB = msg.directorySize / 1048576;
+
+  $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-files").html(msg.numberOfFiles);
+  $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-size").html(sizeInMB.toFixed(2));
+});
+
+socket.on('folder sent successfully', function(msg) {
+  $("#broadcast-loading-bar-container-" + msg).html("");
+});
 
 socket.on('max files allowed', function(msg) {
   $("#broadcast-messages").html(
@@ -171,11 +233,7 @@ socket.on('max directory size allowed', function(msg) {
 });
 
 socket.on('resend folders', function() {
-  for (var key in helpers.broadcastingRepos) {
-    if (helpers.broadcastingRepos.hasOwnProperty(key)) {
-      helpers.sendDirectory(key, "");
-    }
-  }
+  resetBroadcastRows();
 });
 
 socket.on('user stats', function(msg) {

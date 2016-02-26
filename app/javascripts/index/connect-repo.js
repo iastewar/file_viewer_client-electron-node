@@ -201,7 +201,7 @@ $(function() {
   })
 });
 
-socket.on('connected', function(msg) {
+socket.on('send folder', function(msg) {
   if (connecting[msg.name]) {
     console.log(msg.name);
     helpers.connectedRepos[msg.name] = connecting[msg.name];

@@ -341,7 +341,7 @@ socket.on('send file', function(msg){
   }
 });
 
-socket.on('connected', function(msg) {
+socket.on('send folder', function(msg) {
   if (tryingToView) {
     fileTree = {};
     var arr = msg.name.split("/");

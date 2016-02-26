@@ -223,7 +223,36 @@ ipc.on('loggedin', function(event, username) {
 });
 
 helpers.socket.on('log in', function() {
-  console.log("not logged in yet")
+  for (var key in helpers.broadcastingRepos) {
+    if (helpers.broadcastingRepos.hasOwnProperty(key)) {
+      if (helpers.broadcastingRepos[key].watcher) {
+        helpers.broadcastingRepos[key].watcher.close();
+      }
+    }
+  }
+  helpers.broadcastingRepos = {};
+
+  helpers.loggedIn = false;
+
+  $("#broadcastingRepos").html("");
+  $("#broadcastingReposHead").html("");
+  helpers.numBroadcastingRepos = 0;
+  $("#broadcast-help").show();
+
+  $(".loginsignup").html(
+
+    "<button class='btn btn-default dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>" +
+      "Log In / Sign Up <span class='caret'></span>" +
+    "</button>" +
+    "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>" +
+      "<li><a id='login' href='javascript:void(0);'>Log In</a></li>" +
+      "<li><a id='signup' href='javascript:void(0);'>Sign Up</a></li>" +
+    "</ul>"
+
+  );
+
+  $("#broadcast-stats-files").html("0");
+  $("#broadcast-stats-size").html("0.00");
 });
 
 helpers.socket.on('is logged in', function(username) {
