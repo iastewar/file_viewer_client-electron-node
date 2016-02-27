@@ -4,7 +4,7 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 
 var ipc = require("electron").ipcMain;
-require('crash-reporter').start();
+// require('crash-reporter').start();
 
 var mainWindow = null;
 var loginWindow = null;

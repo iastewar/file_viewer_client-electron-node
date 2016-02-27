@@ -12,14 +12,13 @@
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",
     "babel-preset-react": "^6.3.13",
-    "electron-packager": "^5.1.1",
-    "electron-prebuilt": "^0.35.2",
+    "electron-packager": "^5.2.1",
+    "electron-prebuilt": "^0.36.9",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0",
     "webpack-target-electron-renderer": "^0.2.0"
   },
   "dependencies": {
-    "electron-cookies": "^1.1.0",
     "gitignore-parser": "0.0.2",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",

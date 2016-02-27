@@ -1,5 +1,4 @@
 var serverURL = require('./serverURL');
-//var cookie = require('./cookie');
 
 var socketFunctions = {};
 

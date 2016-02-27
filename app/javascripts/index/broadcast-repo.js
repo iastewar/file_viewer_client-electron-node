@@ -42,11 +42,11 @@ var addRow = function(directoryName, chosenDirectoryName) {
   $("#broadcastingRepos").append(
   "<tr>" +
     "<td id='broadcast-name-" + chosenDirectoryName + "' class='broadcastName' width='50%'>" + directoryName + "</td>" +
-    "<td id='broadcast-loading-bar-container-" + chosenDirectoryName + "' width='20%'>" +
+    "<td id='broadcast-loading-bar-container-" + chosenDirectoryName + "' width='15%'>" +
       "<div>broadcasting...</div>" +
       "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>" +
     "</td>" +
-    "<td id='broadcast-stats-" + chosenDirectoryName + "' width='10%'>" +
+    "<td id='broadcast-stats-" + chosenDirectoryName + "' width='15%'>" +
       "<div>Files: <span class='broadcast-stats-files'>0</span></div>" +
       "<div>Size: <span class='broadcast-stats-size'>0.00</span>MB</div>" +
     "</td>" +
@@ -72,6 +72,8 @@ var removeHeader = function() {
 
 var broadcastRepo = function() {
   dialog.showOpenDialog({ properties: ['openDirectory']}, function(directoryNames) {
+    if (!directoryNames) return;
+
     var directoryNameArray = directoryNames[0].split(helpers.separator);
     var chosenDirectoryName = directoryNameArray[directoryNameArray.length - 1];
 
@@ -107,49 +109,45 @@ var broadcastRepo = function() {
               }
               helpers.sendFileToServer(directoryNames[0], fileName, data);
             });
-          } else {
-            if (fileName !== ".git") {
-              helpers.sendDirectory(directoryNames[0], fileName);
-            }
+          } else if (stats.isDirectory()){  // simulate sending a repository
+            // helpers.broadcastingRepos[chosenDirectoryName]["numberOfFiles-" + fileName] = 0;
+
+            helpers.sendDirectory(directoryNames[0], fileName, chosenDirectoryName);
           }
         }
       });
     }
 
-    if (!directoryNames) {
-      return;
+    if (helpers.broadcastingRepos[chosenDirectoryName]) {
+      $("#broadcast-messages").html(
+        "<div class='alert alert-danger'>" +
+        "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
+        "The repository " + chosenDirectoryName + " is already being broadcasted" +
+        "</div>"
+      );
     } else {
-      if (helpers.broadcastingRepos[chosenDirectoryName]) {
-        $("#broadcast-messages").html(
-          "<div class='alert alert-danger'>" +
-          "<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" +
-          "The repository " + chosenDirectoryName + " is already being broadcasted" +
-          "</div>"
-        );
-      } else {
-        console.log("Listening to " + directoryNames[0]);
+      console.log("Listening to " + directoryNames[0]);
 
-        // let server know we are sending a directory
-        socket.emit('send folder', chosenDirectoryName);
+      // let server know we are sending a directory
+      socket.emit('send folder', chosenDirectoryName);
 
-        if (helpers.numBroadcastingRepos === 0) {
-          addHeader();
-          $("#broadcast-help").hide();
-        }
-        helpers.numBroadcastingRepos++;
-
-        addRow(directoryNames[0], chosenDirectoryName);
-
-        // totalInitialFiles is for the loading bar displaying when the folder is first uploaded to the server
-        helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0};
-
-        helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, function(err) {
-          // let server know entire directory has been sent
-          socket.emit('sent folder', chosenDirectoryName);
-        });
-
-        helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
+      if (helpers.numBroadcastingRepos === 0) {
+        addHeader();
+        $("#broadcast-help").hide();
       }
+      helpers.numBroadcastingRepos++;
+
+      addRow(directoryNames[0], chosenDirectoryName);
+
+      // totalInitialFiles is for the loading bar displaying when the folder is first uploaded to the server
+      helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0};
+
+      helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, function(err) {
+        // let server know entire directory has been sent
+        socket.emit('sent folder', chosenDirectoryName);
+      });
+
+      helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
     }
   });
 }

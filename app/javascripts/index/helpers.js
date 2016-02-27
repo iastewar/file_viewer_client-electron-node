@@ -20,25 +20,23 @@ helpers.connectedRepos = {};
 // sets up a gitignore with a .gitignore file if it exists in the fileNames array
 helpers.setUpGitIgnore = function(directoryName, fileNames, chosenDirectoryName, callback) {
   var index = 0;
+
+  var incIndex = function() {
+    index++;
+    if (index === fileNames.length) {
+      if (callback) callback();
+    }
+  }
+
   fileNames.forEach(function(fileName) {
     if (fileName === ".gitignore") {
       fs.readFile(directoryName + helpers.separator + fileName, 'utf8', function(err, data) {
         helpers.broadcastingRepos[chosenDirectoryName].gitignore = parser.compile(data);
         console.log("gitignore created for" + directoryName);
-        index++;
-        if (index === fileNames.length) {
-          if (callback) {
-            callback();
-          }
-        }
+        incIndex();
       });
     } else {
-      index++;
-      if (index === fileNames.length) {
-        if (callback) {
-          callback();
-        }
-      }
+      incIndex();
     }
 
   });
@@ -132,11 +130,11 @@ helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryN
   fs.readdir(directoryName + helpers.separator + subDirectories, function(err, fileNames) {
     if (err) {
       // either the directory doesn't exist or we can't open this many files at once
-      if (callback) callback(true);
+      if (callback) callback(err);
     } else {
       var sendTheFiles = function() {
         if (fileNames.length === 0) {
-          if (callback) callback (false);
+          if (callback) callback();
           return;
         }
 
@@ -145,7 +143,7 @@ helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryN
         var incIndex = function() {
           index++;
           if (index === fileNames.length) {
-            if (callback) callback(false);
+            if (callback) callback();
           }
         }
 

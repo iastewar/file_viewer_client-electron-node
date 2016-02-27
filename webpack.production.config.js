@@ -2,17 +2,12 @@ var webpack = require('webpack');
 var webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
 options = {
   entry: {
-  app: ['webpack/hot/dev-server', './app/javascripts/entry.js'],
+  app: './app/javascripts/entry.js',
 },
 target: "atom",
 output: {
-  path: './app/built',
-  filename: 'bundle.js',
-  publicPath: 'http://localhost:8080/built/'
-},
-devServer: {
-  contentBase: './public',
-  publicPath: 'http://localhost:8080/built/'
+  path: './app/javascripts/built',
+  filename: 'bundle.js'
 },
 module: {
  loaders: [
@@ -20,7 +15,11 @@ module: {
  ]
 },
  plugins: [
-   new webpack.HotModuleReplacementPlugin()
+   new webpack.DefinePlugin({
+    'process.env': {
+      'NODE_ENV': '"production"'
+    }
+  })
  ]
 }
 
