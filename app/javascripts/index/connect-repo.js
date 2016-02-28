@@ -91,7 +91,7 @@ var sendDirectoryError = function(msg) {
 }
 
 var addRow = function(owner, name, storingTo) {
-  $("#connectedRepos").append(
+  $("#connectedRepos").prepend(
   "<tr>" +
     "<td class='connectedName' width='20%'>" + name + "</td>" +
     "<td class='connectedOwner' width='20%'>" + owner + "</td>" +
@@ -103,7 +103,7 @@ var addRow = function(owner, name, storingTo) {
 }
 
 var addHeader = function() {
-  $("#connectedReposHead").append(
+  $("#connectedReposHead").html(
   "<tr>" +
     "<th width='20%'>Name</th>" +
     "<th width='20%'>Owner</th>" +
@@ -222,7 +222,7 @@ socket.on('send folder', function(msg) {
 
 socket.on('send file', sendFile);
 
-socket.on('send directory error', sendDirectoryError);
+socket.on('send folder error', sendDirectoryError);
 
 socket.on('user folder', function(msg) {
   if (msg.owner !== helpers.connectFormShowing) return;

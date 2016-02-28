@@ -8,6 +8,14 @@ var ipc = require('electron').ipcRenderer;
 var socket = helpers.socket;
 helpers.numBroadcastingRepos = 0;
 
+var showProgressBar = function(chosenDirectoryName) {
+  $("#broadcast-loading-bar-container-" + chosenDirectoryName).html(
+    "<div>broadcasting...</div>" +
+    "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>"
+  );
+  $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
+}
+
 var resetBroadcastRows = function() {
   var directoryNameArray = [];
   for (var key in helpers.broadcastingRepos) {
@@ -17,17 +25,14 @@ var resetBroadcastRows = function() {
   }
 
   directoryNameArray.forEach(function(chosenDirectoryName) {
-    $("#broadcast-loading-bar-container-" + chosenDirectoryName).html(
-      "<div>broadcasting...</div>" +
-      "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>"
-    );
-    $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
+    showProgressBar(chosenDirectoryName);
 
     $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-files").html("0");
     $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-size").html("0.00");
 
     helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles = 0;
 
+    helpers.broadcastingRepos[chosenDirectoryName].broadcastsInProgress = 1;
     // let server know we are sending a directory
     socket.emit('send folder', chosenDirectoryName);
 
@@ -39,7 +44,7 @@ var resetBroadcastRows = function() {
 }
 
 var addRow = function(directoryName, chosenDirectoryName) {
-  $("#broadcastingRepos").append(
+  $("#broadcastingRepos").prepend(
   "<tr>" +
     "<td id='broadcast-name-" + chosenDirectoryName + "' class='broadcastName' width='50%'>" + directoryName + "</td>" +
     "<td id='broadcast-loading-bar-container-" + chosenDirectoryName + "' width='15%'>" +
@@ -110,9 +115,18 @@ var broadcastRepo = function() {
               helpers.sendFileToServer(directoryNames[0], fileName, data);
             });
           } else if (stats.isDirectory()){  // simulate sending a repository
-            // helpers.broadcastingRepos[chosenDirectoryName]["numberOfFiles-" + fileName] = 0;
+            // if we have no broadcasts in progress show the progress bar, and remember the number of files in the directory at this time.
+            if (helpers.broadcastingRepos[chosenDirectoryName].broadcastsInProgress === 0) {
+              showProgressBar(chosenDirectoryName);
+              helpers.broadcastingRepos[chosenDirectoryName].oldNumberOfFiles = helpers.broadcastingRepos[chosenDirectoryName].numberOfFiles;
+            }
+            helpers.broadcastingRepos[chosenDirectoryName].broadcastsInProgress++;
 
-            helpers.sendDirectory(directoryNames[0], fileName, chosenDirectoryName);
+            socket.emit('send subfolder', chosenDirectoryName);
+
+            helpers.sendDirectory(directoryNames[0], fileName, chosenDirectoryName, function(err) {
+              socket.emit('sent subfolder', chosenDirectoryName);
+            });
           }
         }
       });
@@ -140,7 +154,7 @@ var broadcastRepo = function() {
       addRow(directoryNames[0], chosenDirectoryName);
 
       // totalInitialFiles is for the loading bar displaying when the folder is first uploaded to the server
-      helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0};
+      helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0, numberOfFiles: 0, directorySize: 0, broadcastsInProgress: 1, oldNumberOfFiles: 0};
 
       helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, function(err) {
         // let server know entire directory has been sent
@@ -199,16 +213,29 @@ $(function() {
 
 socket.on('directory stats', function(msg) {
   if ($("#broadcast-progress-bar-" + msg.directoryName).length !== 0) {
-    $("#broadcast-progress-bar-" + msg.directoryName).progressbar("value", msg.numberOfFiles);
+    // get the difference of the new number of files and previous and update the progress bar max accordingly
+    var difference = msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].numberOfFiles - 1;
+    var currentMax = $("#broadcast-progress-bar-" + msg.directoryName).progressbar( "option", "max" );
+    $("#broadcast-progress-bar-" + msg.directoryName).progressbar({max: (currentMax + difference)});
+
+    $("#broadcast-progress-bar-" + msg.directoryName).progressbar("value", msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles);
+    console.log((msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles) + " / " + helpers.broadcastingRepos[msg.directoryName].totalInitialFiles);
   }
   var sizeInMB = msg.directorySize / 1048576;
 
   $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-files").html(msg.numberOfFiles);
   $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-size").html(sizeInMB.toFixed(2));
+
+  helpers.broadcastingRepos[msg.directoryName].numberOfFiles = msg.numberOfFiles;
+  helpers.broadcastingRepos[msg.directoryName].directorySize = msg.directorySize;
 });
 
 socket.on('folder sent successfully', function(msg) {
-  $("#broadcast-loading-bar-container-" + msg).html("");
+  helpers.broadcastingRepos[msg].broadcastsInProgress--;
+  if (helpers.broadcastingRepos[msg].broadcastsInProgress === 0) {
+    $("#broadcast-loading-bar-container-" + msg).html("");
+    helpers.broadcastingRepos[msg].totalInitialFiles = 0;
+  }
 });
 
 socket.on('max files allowed', function(msg) {

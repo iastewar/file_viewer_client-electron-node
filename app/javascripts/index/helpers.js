@@ -10,7 +10,7 @@ helpers.connectFormShowing;
 helpers.viewFormShowing;
 helpers.viewServerFolder;
 
-// key is chosen directory name, value is an object with full directory name, watcher, gitignore, sentDirectory, totalInitialFiles
+// key is chosen directory name, value is an object with full directory name, watcher, gitignore, sentDirectory, totalInitialFiles, numberOfFiles, directorySize, broadcastsInProgress, oldNumberOfFiles
 helpers.broadcastingRepos = {};
 helpers.numBroadcastingRepos = 0;
 
@@ -104,6 +104,8 @@ helpers.toBuffer = function(ab) {
 // sends a file to the server where directoryName/fileName is the path of the file,
 // and data is the content of the file
 helpers.sendFileToServer = function(directoryName, fileName, data) {
+  // console.log("sending: " + directoryName + "/" + fileName);
+
   var dirArray = directoryName.split(helpers.separator);
   var currentDir = dirArray[dirArray.length-1];
 

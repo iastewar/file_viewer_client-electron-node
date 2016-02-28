@@ -366,7 +366,7 @@ socket.on('send folder', function(msg) {
   }
 });
 
-socket.on('send directory error', sendDirectoryError);
+socket.on('send folder error', sendDirectoryError);
 
 socket.on('user folder', function(msg) {
   if (msg.owner !== helpers.viewFormShowing) return;
