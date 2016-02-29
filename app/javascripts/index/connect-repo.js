@@ -22,7 +22,7 @@ var sendFile = function(msg) {
   var dirFileArray = msg.fileName.split(helpers.separator);
   var serverDir = msg.owner + "/" + dirFileArray[0];
   if (!helpers.connectedRepos[serverDir]) {
-    console.log("Error! Received an unknown file")
+    // console.log("Connect-Repo - Error! Received an unknown file")
   } else {
     // else write file to the connected directory.
     // if file should be deleted, delete it
@@ -129,6 +129,7 @@ var connectBtn = function() {
 var connectFormShow = function() {
   var owner = $("#connect-form input[name='owner']").val();
   if (owner === "") return;
+  $("#connect-form-spinner-container").show();
   socket.emit('show user folders', owner);
   if (helpers.connectFormShowing && helpers.connectFormShowing !== helpers.viewFormShowing) {
     socket.emit('disconnect user folders', helpers.connectFormShowing);
@@ -137,7 +138,7 @@ var connectFormShow = function() {
   userFolders = {};
   $("#connect-form input[name='owner']").val("");
   $("#connect-form-show-header").html(owner + "'s Repositories")
-  $("#connect-form-show-container").show().html("");
+  $("#connect-form-show-container").html("");
 }
 
 $(function() {
@@ -227,6 +228,9 @@ socket.on('send folder error', sendDirectoryError);
 socket.on('user folder', function(msg) {
   if (msg.owner !== helpers.connectFormShowing) return;
 
+  $("#connect-form-spinner-container").hide();
+  $("#connect-form-show-container").show();
+
   if ($("#connect-form-show-error-message").length !== 0) {
     $("#connect-form-show-error-message").remove();
   }
@@ -240,12 +244,18 @@ socket.on('user folder', function(msg) {
 socket.on('delete user folder', function(msg) {
   if (msg.owner !== helpers.connectFormShowing) return;
 
+  $("#connect-form-spinner-container").hide();
+  $("#connect-form-show-container").show();
+
   $("#connect-form-show-container .user-folder:contains('" + msg.name + "')").remove();
   delete userFolders[msg.name];
 });
 
 socket.on('user folder empty', function(msg) {
   if (msg !== helpers.connectFormShowing) return;
+
+  $("#connect-form-spinner-container").hide();
+  $("#connect-form-show-container").show();
 
   $("#connect-form-show-container").html("<div id='connect-form-show-error-message' class='alert alert-danger'>This user has no repositories or does not exist</div>");
   userFolders = {};

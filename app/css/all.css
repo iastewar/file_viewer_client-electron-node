@@ -31,3 +31,17 @@
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+@keyframes fadein {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.fadeIn {
+  -webkit-animation: fadein 2s ease-out;
+}
+
+.loading-spinner {
+  font-size: 2.5em;
+  margin-top: 25px;
+}

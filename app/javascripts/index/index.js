@@ -4,7 +4,7 @@ var serverURL = require('../serverURL');
 var socketFunctions = require('../socket-functions');
 var ipc = require('electron').ipcRenderer;
 var helpers = require('./helpers');
-var viewRepo = require('./view-repo');
+var viewRepo = require('./view-repo/view-repo');
 var connectRepo = require('./connect-repo');
 var broadcastRepo = require('./broadcast-repo');
 
@@ -21,7 +21,7 @@ if (process.platform === 'win32') {
 
 broadcastRepo(helpers);
 connectRepo(helpers);
-viewRepo(helpers);
+viewRepo(helpers, 50);
 
 $(function() {
 

@@ -15,8 +15,8 @@
     <script src="../../dependencies/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../dependencies/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
     <script src="../../dependencies/highlight/highlight.pack.js"></script>
-    <!-- <script src="http://52.34.2.212/socket.io/socket.io.js"></script> -->
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="http://52.34.2.212/socket.io/socket.io.js"></script>
+    <!-- <script src="http://localhost:3000/socket.io/socket.io.js"></script> -->
 
   </head>
   <body>
@@ -64,6 +64,7 @@
 
       <!-- Tab panes -->
       <div class="tab-content" id="main-container">
+
         <div role="tabpanel" class="tab-pane active" id="view">
           <div class="main-header">
             <h2 id="view-btn">View Repository</h2>
@@ -85,7 +86,30 @@
           </div>
 
           <h2 id="view-header"></h2>
-          <div id="viewingRepos"></div>
+
+          <div id="hide-buttons-container" style="display: none">
+            <div id="hide-history" class="fa fa-caret-right" style="left: 80%; display: none;"></div>
+            <div id="hide-fileTree" class="fa fa-caret-left" style="right: 80%; display: none;"></div>
+          </div>
+
+          <div id="receiving-files-spinner" style="display: none;">
+            <i class="fa fa-spinner fa-pulse"></i>
+            <span>Receiving files...</span>
+          </div>
+
+          <div id="history-container" style="display: none;">
+            <div id="history-header">
+              <div>History</div>
+            </div>
+
+            <div id="history-contents"></div>
+          </div>
+
+          <div id="loading-view" style="display: none;">
+            <i id="loading-spinner" class="fa fa-spinner fa-pulse"></i>
+          </div>
+
+          <div id="file-view-container"></div>
         </div>
 
 
@@ -172,6 +196,9 @@
             <button id="view-form-show" class="btn btn-md">Show</button>
           </div>
           <h3 id="view-form-show-header"></h3>
+          <div id="view-form-spinner-container" style="display: none">
+            <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+          </div>
           <div id="view-form-show-container"></div>
         </div>
 
@@ -185,6 +212,9 @@
             <button id="connect-form-show" class="btn btn-md">Show</button>
           </div>
           <h3 id="connect-form-show-header"></h3>
+          <div id="connect-form-spinner-container" style="display: none">
+            <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+          </div>
           <div id="connect-form-show-container"></div>
         </div>
       </div>
