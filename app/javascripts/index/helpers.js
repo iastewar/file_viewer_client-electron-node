@@ -128,7 +128,7 @@ helpers.deleteFileFromServer = function(directoryName, fileName) {
   helpers.socket.emit('send file', JSON.stringify({fileName: currentDir + '/' + fileName, deleted: true}));
 }
 
-helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryName, callback) {
+helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryName, chosenDirectoryNameIdJq, callback) {
   fs.readdir(directoryName + helpers.separator + subDirectories, function(err, fileNames) {
     if (err) {
       // either the directory doesn't exist or we can't open this many files at once
@@ -179,7 +179,7 @@ helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryN
                 incIndex();
               } else if (stats.isDirectory()) {
                 if (fileName !== ".git") {
-                  helpers.sendDirectory(directoryName, subDirs, chosenDirectoryName, function(err) {
+                  helpers.sendDirectory(directoryName, subDirs, chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
                     incIndex();
                   });
                 } else {
@@ -187,7 +187,7 @@ helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryN
                 }
               } else if (stats.isFile()) {
                 helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles++;
-                $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles});
+                $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar({max: helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles});
 
                 var readFile = function(callback) {
                   fs.readFile(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, data) {

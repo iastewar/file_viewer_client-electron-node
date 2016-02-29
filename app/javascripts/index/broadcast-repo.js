@@ -8,12 +8,24 @@ var ipc = require('electron').ipcRenderer;
 var socket = helpers.socket;
 helpers.numBroadcastingRepos = 0;
 
-var showProgressBar = function(chosenDirectoryName) {
-  $("#broadcast-loading-bar-container-" + chosenDirectoryName).html(
+// converts a string with spaces to an id by replacing all spaces with a : and returns
+// the new string (we use ':' since it doesn't interfere with directory names)
+var convertToId = function(s) {
+  return s.replace(/\s/g, ":");
+}
+
+// converts an html id to one that jquery will accept as a selector
+var convertToJq = function(id) {
+  return id.replace( /(:|\.|\[|\]|,)/g, "\\$1" );
+}
+
+var showProgressBar = function(chosenDirectoryNameId) {
+  var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
+  $("#broadcast-loading-bar-container-" + chosenDirectoryNameIdJq).html(
     "<div>broadcasting...</div>" +
-    "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>"
+    "<div id='broadcast-progress-bar-" + chosenDirectoryNameId + "'></div>"
   );
-  $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
+  $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar({max: 0});
 }
 
 var resetBroadcastRows = function() {
@@ -25,10 +37,13 @@ var resetBroadcastRows = function() {
   }
 
   directoryNameArray.forEach(function(chosenDirectoryName) {
-    showProgressBar(chosenDirectoryName);
+    var chosenDirectoryNameId = convertToId(chosenDirectoryName);
+    var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
 
-    $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-files").html("0");
-    $("#broadcast-stats-" + chosenDirectoryName + " .broadcast-stats-size").html("0.00");
+    showProgressBar(chosenDirectoryNameId);
+
+    $("#broadcast-stats-" + chosenDirectoryNameIdJq + " .broadcast-stats-files").html("0");
+    $("#broadcast-stats-" + chosenDirectoryNameIdJq + " .broadcast-stats-size").html("0.00");
 
     helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles = 0;
 
@@ -36,7 +51,7 @@ var resetBroadcastRows = function() {
     // let server know we are sending a directory
     socket.emit('send folder', chosenDirectoryName);
 
-    helpers.sendDirectory(helpers.broadcastingRepos[chosenDirectoryName].fullDirectoryName, "", chosenDirectoryName, function(err) {
+    helpers.sendDirectory(helpers.broadcastingRepos[chosenDirectoryName].fullDirectoryName, "", chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
       // let server know entire directory has been sent
       socket.emit('sent folder', chosenDirectoryName);
     });
@@ -44,14 +59,17 @@ var resetBroadcastRows = function() {
 }
 
 var addRow = function(directoryName, chosenDirectoryName) {
+  var chosenDirectoryNameId = convertToId(chosenDirectoryName);
+  var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
+
   $("#broadcastingRepos").prepend(
   "<tr>" +
-    "<td id='broadcast-name-" + chosenDirectoryName + "' class='broadcastName' width='50%'>" + directoryName + "</td>" +
-    "<td id='broadcast-loading-bar-container-" + chosenDirectoryName + "' width='15%'>" +
+    "<td id='broadcast-name-" + chosenDirectoryNameId + "' class='broadcastName' width='50%'>" + directoryName + "</td>" +
+    "<td id='broadcast-loading-bar-container-" + chosenDirectoryNameId + "' width='15%'>" +
       "<div>broadcasting...</div>" +
-      "<div id='broadcast-progress-bar-" + chosenDirectoryName + "'></div>" +
+      "<div id='broadcast-progress-bar-" + chosenDirectoryNameId + "'></div>" +
     "</td>" +
-    "<td id='broadcast-stats-" + chosenDirectoryName + "' width='15%'>" +
+    "<td id='broadcast-stats-" + chosenDirectoryNameId + "' width='15%'>" +
       "<div>Files: <span class='broadcast-stats-files'>0</span></div>" +
       "<div>Size: <span class='broadcast-stats-size'>0.00</span>MB</div>" +
     "</td>" +
@@ -59,7 +77,7 @@ var addRow = function(directoryName, chosenDirectoryName) {
   "</tr>"
   );
 
-  $("#broadcast-progress-bar-" + chosenDirectoryName).progressbar({max: 0});
+  $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar({max: 0});
 }
 
 var addHeader = function() {
@@ -81,6 +99,8 @@ var broadcastRepo = function() {
 
     var directoryNameArray = directoryNames[0].split(helpers.separator);
     var chosenDirectoryName = directoryNameArray[directoryNameArray.length - 1];
+    var chosenDirectoryNameId = convertToId(chosenDirectoryName);
+    var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
 
     var watchOnEvent = function(event, fileName) {
       // check if fileName contains .git
@@ -124,7 +144,7 @@ var broadcastRepo = function() {
 
             socket.emit('send subfolder', chosenDirectoryName);
 
-            helpers.sendDirectory(directoryNames[0], fileName, chosenDirectoryName, function(err) {
+            helpers.sendDirectory(directoryNames[0], fileName, chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
               socket.emit('sent subfolder', chosenDirectoryName);
             });
           }
@@ -156,7 +176,7 @@ var broadcastRepo = function() {
       // totalInitialFiles is for the loading bar displaying when the folder is first uploaded to the server
       helpers.broadcastingRepos[chosenDirectoryName] = {fullDirectoryName: directoryNames[0], sentDirectory: false, totalInitialFiles: 0, numberOfFiles: 0, directorySize: 0, broadcastsInProgress: 1, oldNumberOfFiles: 0};
 
-      helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, function(err) {
+      helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
         // let server know entire directory has been sent
         socket.emit('sent folder', chosenDirectoryName);
       });
@@ -212,28 +232,38 @@ $(function() {
 });
 
 socket.on('directory stats', function(msg) {
-  if ($("#broadcast-progress-bar-" + msg.directoryName).length !== 0) {
+  if (!helpers.broadcastingRepos[msg.directoryName]) return;
+
+  var chosenDirectoryNameId = convertToId(msg.directoryName);
+  var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
+
+  if ($("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).length !== 0) {
     // get the difference of the new number of files and previous and update the progress bar max accordingly
     var difference = msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].numberOfFiles - 1;
-    var currentMax = $("#broadcast-progress-bar-" + msg.directoryName).progressbar( "option", "max" );
-    $("#broadcast-progress-bar-" + msg.directoryName).progressbar({max: (currentMax + difference)});
+    var currentMax = $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar( "option", "max" );
+    $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar({max: (currentMax + difference)});
 
-    $("#broadcast-progress-bar-" + msg.directoryName).progressbar("value", msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles);
-    console.log((msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles) + " / " + helpers.broadcastingRepos[msg.directoryName].totalInitialFiles);
+    $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar("value", msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles);
+    // console.log((msg.numberOfFiles - helpers.broadcastingRepos[msg.directoryName].oldNumberOfFiles) + " / " + helpers.broadcastingRepos[msg.directoryName].totalInitialFiles);
   }
   var sizeInMB = msg.directorySize / 1048576;
 
-  $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-files").html(msg.numberOfFiles);
-  $("#broadcast-stats-" + msg.directoryName + " .broadcast-stats-size").html(sizeInMB.toFixed(2));
+  $("#broadcast-stats-" + chosenDirectoryNameIdJq + " .broadcast-stats-files").html(msg.numberOfFiles);
+  $("#broadcast-stats-" + chosenDirectoryNameIdJq + " .broadcast-stats-size").html(sizeInMB.toFixed(2));
 
   helpers.broadcastingRepos[msg.directoryName].numberOfFiles = msg.numberOfFiles;
   helpers.broadcastingRepos[msg.directoryName].directorySize = msg.directorySize;
 });
 
 socket.on('folder sent successfully', function(msg) {
+  if (!helpers.broadcastingRepos[msg]) return;
+
+  var chosenDirectoryNameId = convertToId(msg);
+  var chosenDirectoryNameIdJq = convertToJq(chosenDirectoryNameId);
+
   helpers.broadcastingRepos[msg].broadcastsInProgress--;
   if (helpers.broadcastingRepos[msg].broadcastsInProgress === 0) {
-    $("#broadcast-loading-bar-container-" + msg).html("");
+    $("#broadcast-loading-bar-container-" + chosenDirectoryNameIdJq).html("");
     helpers.broadcastingRepos[msg].totalInitialFiles = 0;
   }
 });
