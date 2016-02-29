@@ -289,12 +289,14 @@ $(function() {
   $("#view-form-show").on("click", viewFormShow);
 
   $("#view-form-show-container").on("click", ".user-folder", function() {
-    tryingToView = helpers.viewFormShowing + "/" + $(this).text();
-    console.log("trying to view " + tryingToView);
-    socket.emit('connect folder', tryingToView);
+    var directoryName = helpers.viewFormShowing + "/" + $(this).text();
+    console.log("trying to view " + directoryName);
+    socket.emit('connect folder', directoryName);
 
     resetView();
+    tryingToView = helpers.viewFormShowing + "/" + $(this).text();
     $("#loading-view").show();
+    $("#view-header").html(tryingToView);
 
     $("#forms-container").hide();
     $("#view-form").attr("data", "hidden");
@@ -307,7 +309,6 @@ $(function() {
 socket.on('send folder', function(msg) {
   if (tryingToView) {
     var arr = msg.name.split("/");
-    $("#view-header").html(msg.name);
 
     if (helpers.viewServerFolder && !helpers.connectedRepos[helpers.viewServerFolder]) {
       socket.emit('disconnect folder', helpers.viewServerFolder)
