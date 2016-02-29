@@ -138,7 +138,7 @@ var connectFormShow = function() {
   userFolders = {};
   $("#connect-form input[name='owner']").val("");
   $("#connect-form-show-header").html(owner + "'s Repositories")
-  $("#connect-form-show-container").html("");
+  $("#connect-form-show-container").html("").hide();
 }
 
 $(function() {

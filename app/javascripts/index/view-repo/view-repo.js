@@ -198,7 +198,7 @@ var viewFormShow = function() {
   userFolders = {};
   $("#view-form input[name='owner']").val("");
   $("#view-form-show-header").html(owner + "'s Repositories")
-  $("#view-form-show-container").html("");
+  $("#view-form-show-container").html("").hide();
 }
 
 $(function() {
