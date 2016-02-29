@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('graceful-fs')
 var parser = require('gitignore-parser');
 var helpers = {};
 
@@ -45,42 +45,46 @@ helpers.setUpGitIgnore = function(directoryName, fileNames, chosenDirectoryName,
 helpers.rmdirRec = function(directoryName, subDirectories, callback) {
 	fs.readdir(directoryName + helpers.separator + subDirectories, function(err, fileNames) {
 		if (err) {
-			if (callback)
-				callback();
+			if (callback) callback();
 		} else {
+      if (fileNames.length === 0) {
+				fs.rmdir(directoryName + '/' + subDirectories, function(err) {
+					if (callback) callback();
+				});
+			}
 			var index = 0;
+
+      var incIndex = function() {
+				index++;
+				if (index === fileNames.length) {
+					fs.rmdir(directoryName + helpers.separator + subDirectories, function(err) {
+						if (callback) callback();
+					});
+				}
+      }
+
 			fileNames.forEach(function(fileName) {
-				fs.stat(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, stats) {
+        var subDirs;
+        if (subDirectories === "") {
+          subDirs = fileName;
+        } else {
+          subDirs = subDirectories + helpers.separator + fileName;
+        }
+
+				fs.stat(directoryName + helpers.separator + subDirs, function(err, stats) {
 					if (err || !stats) {
-						fs.rmdir(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err) {
+						fs.rmdir(directoryName + helpers.separator + subDirs, function(err) {
 						});
 					} else {
-						var subDirs;
-						if (subDirectories === "") {
-							subDirs = fileName;
-						} else {
-							subDirs = subDirectories + helpers.separator + fileName;
-						}
-
 						if (stats.isDirectory()) {
 							helpers.rmdirRec(directoryName, subDirs, function() {
-								index++;
-								if (index === fileNames.length) {
-									fs.rmdir(directoryName + helpers.separator + subDirectories, function(err) {
-										if (callback)
-											callback();
-									});
-								}
+                fs.rmdir(directoryName + '/' + subDirs, function(err) {
+									incIndex();
+								});
 							});
 						} else {
 							fs.unlink(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err) {
-								index++;
-		            if (index === fileNames.length) {
-		              fs.rmdir(directoryName + helpers.separator + subDirectories, function(err) {
-										if (callback)
-											callback();
-									});
-		            }
+								incIndex();
 							});
 						}
 					}
@@ -131,7 +135,7 @@ helpers.deleteFileFromServer = function(directoryName, fileName) {
 helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryName, chosenDirectoryNameIdJq, callback) {
   fs.readdir(directoryName + helpers.separator + subDirectories, function(err, fileNames) {
     if (err) {
-      // either the directory doesn't exist or we can't open this many files at once
+      // either the directory doesn't exist or we can't open this many files at once (solved by graceful-fs)
       if (callback) callback(err);
     } else {
       var sendTheFiles = function() {
@@ -189,17 +193,10 @@ helpers.sendDirectory = function(directoryName, subDirectories, chosenDirectoryN
                 helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles++;
                 $("#broadcast-progress-bar-" + chosenDirectoryNameIdJq).progressbar({max: helpers.broadcastingRepos[chosenDirectoryName].totalInitialFiles});
 
-                var readFile = function(callback) {
-                  fs.readFile(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, data) {
-                    if (err) {
-                      readFile();
-                    } else {
-                      helpers.sendFileToServer(directoryName, subDirs, data);
-                      incIndex();
-                    }
-                  });
-                }
-                readFile();
+                fs.readFile(directoryName + helpers.separator + subDirectories + helpers.separator + fileName, function(err, data) {
+                  helpers.sendFileToServer(directoryName, subDirs, data);
+                  incIndex();
+                });
               } else {
                 incIndex(); // just to be safe
               }

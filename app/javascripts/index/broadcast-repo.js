@@ -1,6 +1,6 @@
 module.exports = function(helpers) {
 
-var fs = require('fs');
+var fs = require('graceful-fs')
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var ipc = require('electron').ipcRenderer;
@@ -179,9 +179,8 @@ var broadcastRepo = function() {
       helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
         // let server know entire directory has been sent
         socket.emit('sent folder', chosenDirectoryName);
+        helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
       });
-
-      helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
     }
   });
 }

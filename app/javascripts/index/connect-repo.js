@@ -1,6 +1,6 @@
 module.exports = function(helpers) {
 
-var fs = require('fs');
+var fs = require('graceful-fs')
 var remote = require('remote');
 var dialog = remote.require('dialog');
 

@@ -41,7 +41,7 @@ var resetView = function() {
   historyMessages = 0;
   historyScrolledToBottom = true;
   $("#loading-view").html(
-    "<i id='loading-spinner' class='fa fa-spinner fa-pulse'></i>"
+    "<i class='fa fa-spinner fa-pulse loading-spinner'></i>"
   );
   $("#loading-view").hide();
   $("#hide-buttons-container").hide();
@@ -297,6 +297,7 @@ $(function() {
     tryingToView = helpers.viewFormShowing + "/" + $(this).text();
     $("#loading-view").show();
     $("#view-header").html(tryingToView);
+    $("#view-help").hide();
 
     $("#forms-container").hide();
     $("#view-form").attr("data", "hidden");
@@ -315,7 +316,6 @@ socket.on('send folder', function(msg) {
     }
     helpers.viewServerFolder = msg.name;
     tryingToView = false;
-    $("#view-help").hide();
 
     totalNumberOfFiles = msg.numberOfFiles;
     $("#loading-view").html(
