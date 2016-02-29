@@ -247,7 +247,6 @@ body {
   margin-left: 20px;
   padding: 5px;
   border: 2px;
-  width: 25%;
   overflow: hidden;
 }
 
@@ -617,6 +616,7 @@ table {
   position: absolute;
   top: 51px;
   overflow-y: auto;
+  overflow-x: hidden;
   bottom: 0px;
   width: 100%;
 }

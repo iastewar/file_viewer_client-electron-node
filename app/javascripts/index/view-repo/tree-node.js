@@ -8,7 +8,7 @@ var TreeNode = React.createClass({
   toggle: function() {
     this.setState({visible: !this.state.visible});
     this.setState({open: !this.state.open});
-    if (this.props.node.fileContents) {
+    if (this.props.node.fileContents || this.props.node.fileContents === "") {
       this.props.notifyParent(this.props.node.name, this.props.node.fileContents, this.props.node.fullName);
     }
   },
