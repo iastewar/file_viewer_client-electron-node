@@ -179,8 +179,9 @@ var broadcastRepo = function() {
       helpers.sendDirectory(directoryNames[0], "", chosenDirectoryName, chosenDirectoryNameIdJq, function(err) {
         // let server know entire directory has been sent
         socket.emit('sent folder', chosenDirectoryName);
-        helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
       });
+
+      helpers.broadcastingRepos[chosenDirectoryName].watcher = fs.watch(directoryNames[0], { persistent: true, recursive: true }, watchOnEvent);
     }
   });
 }
