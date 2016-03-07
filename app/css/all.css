@@ -1,3 +1,14 @@
+#wrapper {
+  position: absolute;
+  background-color: black;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  -webkit-app-region: no-drag;
+  border: 1.5px solid black;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

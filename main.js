@@ -18,77 +18,112 @@ if (process.platform === 'darwin') {
   frame = true;
 }
 
+var loadMainWindow = function() {
+  mainWindow = new BrowserWindow({
+      titleBarStyle: titleBarStyle,
+      frame: frame,
+      height: 768,
+      width: 1200,
+      show: false
+  });
+
+  mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
+
+  mainWindow.webContents.on('did-finish-load', function() {
+    mainWindow.show();
+  });
+
+  mainWindow.on('closed', function() {
+    mainWindow = null;
+    if (process.platform !== 'darwin') {
+      if (loginWindow) loginWindow.close();
+      if (signupWindow) signupWindow.close();
+      app.quit();
+    }
+  });
+
+  if (process.platform !== 'darwin') {
+    mainWindow.on('maximize', function() {
+      mainWindow.webContents.send('maximized');
+    });
+
+    mainWindow.on('unmaximize', function() {
+      mainWindow.webContents.send('unmaximized');
+    });
+  }
+
+  // mainWindow.webContents.openDevTools();
+}
+
+var loadSignupWindow = function() {
+  signupWindow = new BrowserWindow({
+      titleBarStyle: titleBarStyle,
+      frame: frame,
+      height: 400,
+      width: 500,
+      show: false
+  });
+
+  signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
+
+  signupWindow.on('closed', function () {
+    if (mainWindow) {
+      loadSignupWindow();
+    } else {
+      signupWindow = null;
+    }
+  });
+
+  if (process.platform !== 'darwin') {
+    signupWindow.on('maximize', function() {
+      signupWindow.webContents.send('maximized');
+    });
+
+    signupWindow.on('unmaximize', function() {
+      signupWindow.webContents.send('unmaximized');
+    });
+  }
+}
+
+var loadLoginWindow = function() {
+  loginWindow = new BrowserWindow({
+      titleBarStyle: titleBarStyle,
+      frame: frame,
+      height: 400,
+      width: 500,
+      show: false
+  });
+
+  loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
+
+  loginWindow.on('closed', function() {
+    if (mainWindow) {
+      loadLoginWindow();
+    } else {
+      loginWindow = null;
+    }
+  });
+
+  if (process.platform !== 'darwin') {
+    loginWindow.on('maximize', function() {
+      loginWindow.webContents.send('maximized');
+    });
+
+    loginWindow.on('unmaximize', function() {
+      loginWindow.webContents.send('unmaximized');
+    });
+  }
+}
+
 app.on('ready', function() {
-    mainWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 768,
-        width: 1200,
-        show: false
-    });
-
-    mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
-
-    mainWindow.webContents.on('did-finish-load', function() {
-      mainWindow.show();
-    });
-
-    signupWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 400,
-        width: 500,
-        show: false
-    });
-
-    signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
-
-    loginWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 400,
-        width: 500,
-        show: false
-    });
-
-    loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
-
-    // mainWindow.webContents.openDevTools();
-
-    mainWindow.on('closed', function() {
-      mainWindow = null;
-      if (process.platform !== 'darwin') {
-        if (loginWindow) loginWindow.close();
-        if (signupWindow) signupWindow.close();
-        app.quit();
-      }
-    });
+    loadMainWindow();
+    loadSignupWindow();
+    loadLoginWindow();
 });
 
 app.on('activate', function() {
   if (!mainWindow) {
-    mainWindow = new BrowserWindow({
-        titleBarStyle: titleBarStyle,
-        frame: frame,
-        height: 768,
-        width: 1200,
-        show: false
-    });
-
-    mainWindow.loadURL('file://' + __dirname + '/app/views/index.html');
-
-    mainWindow.webContents.on('did-finish-load', function() {
-      mainWindow.show();
-    });
-
-    mainWindow.on('closed', function() {
-      mainWindow = null;
-      if (process.platform !== 'darwin') {
-        if (loginWindow) loginWindow.close();
-        if (signupWindow) signupWindow.close();
-        app.quit();
-      }
-    });
+    loadMainWindow();
   }
 });
 
@@ -110,22 +145,6 @@ ipc.on('close-main-window', function () {
 
 ipc.on('open-signup-window', function () {
     signupWindow.show();
-
-    signupWindow.on('closed', function () {
-      if (mainWindow) {
-        signupWindow = new BrowserWindow({
-            titleBarStyle: titleBarStyle,
-            frame: frame,
-            height: 400,
-            width: 500,
-            show: false
-        });
-
-        signupWindow.loadURL('file://' + __dirname + '/app/views/signup.html');
-      } else {
-        signupWindow = null;
-      }
-    });
 });
 
 ipc.on('minimize-signup-window', function () {
@@ -148,22 +167,6 @@ ipc.on('close-signup-window', function () {
 
 ipc.on('open-login-window', function () {
     loginWindow.show();
-
-    loginWindow.on('closed', function () {
-      if (mainWindow) {
-        loginWindow = new BrowserWindow({
-            titleBarStyle: titleBarStyle,
-            frame: frame,
-            height: 400,
-            width: 500,
-            show: false
-        });
-
-        loginWindow.loadURL('file://' + __dirname + '/app/views/login.html');
-      } else {
-        loginWindow = null;
-      }
-    });
 });
 
 ipc.on('minimize-login-window', function () {

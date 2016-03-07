@@ -79,3 +79,11 @@ $(function() {
 
   $("#submitlogin").on("click", submitLogin);
 });
+
+ipc.on('maximized', function() {
+  $("#window-maximize-cont").html("<div id='window-restore-btn' class='window-btn'><div></div><div></div></div>");
+});
+
+ipc.on('unmaximized', function() {
+  $("#window-maximize-cont").html("<div id='window-maximize-btn' class='window-btn'><div></div></div>");
+});

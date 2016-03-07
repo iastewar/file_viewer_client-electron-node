@@ -20,210 +20,211 @@
 
   </head>
   <body>
-    <div class="container">
-      <!-- this is to make sure the stop button is loaded at the start -->
-      <span id="stop-btn-loader" class='fa fa-stop'></span>
+    <div id="wrapper">
+      <div class="container">
+        <!-- this is to make sure the stop button is loaded at the start -->
+        <span id="stop-btn-loader" class='fa fa-stop'></span>
 
-      <div id="new-version" style="display: none;">
-        <div>
-          A new version is available: <span id="new-version-number"></span>
-        </div>
-      </div>
-
-      <div id="window">
-        <div id="window-title">CodeMirror <span id="version-number"></span></div>
-      </div>
-
-      <div class="row" id="header">
-        <div id="tabs" class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-          <!-- Nav tabs -->
-          <ul class="nav nav-pills" role="tablist">
-            <li role="presentation" class="active tab" id="view-tab"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View</a></li>
-            <li role="presentation" class="tab" id="connect-tab"><a href="#connect" aria-controls="connect" role="tab" data-toggle="tab">Connect</a></li>
-            <li role="presentation" class="tab" id="broadcast-tab"><a href="#broadcast" aria-controls="broadcast" role="tab" data-toggle="tab">Broadcast</a></li>
-          </ul>
+        <div id="new-version" style="display: none;">
+          <div>
+            A new version is available: <span id="new-version-number"></span>
+          </div>
         </div>
 
-        <div id="loginsignupdropdown" class="col-md-4 col-lg-4">
-          <div class="dropdown pull-right loginsignup">
-            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              Log In / Sign Up <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" id="dropdownMenu1-contents" aria-labelledby="dropdownMenu1">
-              <li><a id="login" href="javascript:void(0);">Log In</a></li>
-              <li><a id="signup" href="javascript:void(0);">Sign Up</a></li>
+        <div id="window">
+          <div id="window-title">CodeMirror <span id="version-number"></span></div>
+        </div>
+
+        <div class="row" id="header">
+          <div id="tabs" class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <!-- Nav tabs -->
+            <ul class="nav nav-pills" role="tablist">
+              <li role="presentation" class="active tab" id="view-tab"><a href="#view" aria-controls="view" role="tab" data-toggle="tab">View</a></li>
+              <li role="presentation" class="tab" id="connect-tab"><a href="#connect" aria-controls="connect" role="tab" data-toggle="tab">Connect</a></li>
+              <li role="presentation" class="tab" id="broadcast-tab"><a href="#broadcast" aria-controls="broadcast" role="tab" data-toggle="tab">Broadcast</a></li>
             </ul>
           </div>
+
+          <div id="loginsignupdropdown" class="col-md-4 col-lg-4">
+            <div class="dropdown pull-right loginsignup">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Log In / Sign Up <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" id="dropdownMenu1-contents" aria-labelledby="dropdownMenu1">
+                <li><a id="login" href="javascript:void(0);">Log In</a></li>
+                <li><a id="signup" href="javascript:void(0);">Sign Up</a></li>
+              </ul>
+            </div>
+          </div>
+
         </div>
 
-      </div>
+        <div id="left-pane"></div>
 
-      <div id="left-pane"></div>
+        <div id="empty-container"></div>
 
-      <div id="empty-container"></div>
+        <!-- Tab panes -->
+        <div class="tab-content" id="main-container">
 
-      <!-- Tab panes -->
-      <div class="tab-content" id="main-container">
-
-        <div role="tabpanel" class="tab-pane active" id="view">
-          <div class="main-header">
-            <h2 id="view-btn">View Repository</h2>
-          </div>
-          <div id="view-messages" class="error-message"></div>
-
-          <div id="view-help" class="help">
-            <div class="help-textbox">
-              <p>
-                Click the button to view a user's repository by specifying their username
-                and repository name.
-              </p>
-              <p>
-                Remember that only text files can be viewed. If a non-text
-                file is in the repository, it will not be displayed properly. In this case
-                you should use the connect feature instead.
-              </p>
+          <div role="tabpanel" class="tab-pane active" id="view">
+            <div class="main-header">
+              <h2 id="view-btn">View Repository</h2>
             </div>
-          </div>
+            <div id="view-messages" class="error-message"></div>
 
-          <h2 id="view-header"></h2>
-
-          <div id="hide-buttons-container" style="display: none">
-            <div id="hide-history" class="fa fa-caret-right" style="left: 80%; display: none;"></div>
-            <div id="hide-fileTree" class="fa fa-caret-left" style="right: 80%; display: none;"></div>
-          </div>
-
-          <div id="receiving-files-spinner" style="display: none;">
-            <i class="fa fa-spinner fa-pulse"></i>
-            <span>Receiving files...</span>
-          </div>
-
-          <div id="history-container" style="display: none;">
-            <div id="history-header">
-              <div>History</div>
-            </div>
-
-            <div id="history-contents"></div>
-          </div>
-
-          <div id="loading-view" style="display: none;">
-            <i class="fa fa-spinner fa-pulse loading-spinner"></i>
-          </div>
-
-          <div id="file-view-container"></div>
-        </div>
-
-
-        <div role="tabpanel" class="tab-pane" id="connect">
-          <div class="main-header">
-            <h2 id="connect-btn">Connect to Repository</h2>
-          </div>
-          <div id="connect-messages" class="error-message"></div>
-
-          <div id="connect-help" class="help">
-            <div class="help-textbox">
-              <p>
-                Click the button to connect to a user's repository by specifying their username
-                and repository name, and pointing to a directory of your choice. The repository will
-                then be stored in the chosen directory and will be a perfect reflection of the original.
-              </p>
-              <p>
-                Remember that any edits you make to the files in the repository will be overwritten if the owner
-                edits the file. You can connect to multiple repositories.
-              </p>
-            </div>
-          </div>
-
-          <div class="scrollTableContainer">
-            <div class="tHeadContainer">
-              <table id="connectedReposHead" class="tHead"></table>
-            </div>
-            <div class="tBodyContainer">
-              <table id="connectedRepos" class="tBody"></table>
-            </div>
-          </div>
-        </div>
-
-
-        <div role="tabpanel" class="tab-pane" id="broadcast">
-          <div class="main-header">
-            <h2 id="broadcast-btn">Broadcast Repository</h2>
-          </div>
-          <div id="broadcast-messages" class="error-message"></div>
-
-          <div id="broadcast-help" class="help">
-            <div class="help-textbox">
-              <p>
-                Click the button to broadcast a directory of your choice. You must be logged in to access
-                this feature. Once a directory is broadcasted, it will be able to be viewed by anyone who
-                knows your username. You can broadcast multiple directories.
-              </p>
-              <p>
-                A maximum of 10000 files is allowed per user, a maximum of 100MB is allowed per user,
-                and each file must be no larger than 20MB (these restrictions may change in the future). A .gitignore file can
-                be created to prevent certain files and directories from being broadcasted. This file should follow
-                the exact same format as a normal .gitignore file for the Git version control system.
-              </p>
-            </div>
-          </div>
-
-          <div id="broadcast-stats">
-            <div>Files: <span id="broadcast-stats-files">0</span> / 10000</div>
-            <div>Size: <span id="broadcast-stats-size">0.00</span> / 100.00MB</div>
-          </div>
-
-          <div class="scrollTableContainer">
-            <div class="tHeadContainer">
-              <table id="broadcastingReposHead" class="tHead"></table>
-            </div>
-            <div class="tBodyContainer">
-              <table id="broadcastingRepos" class="tBody"></table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="right-pane"></div>
-      <div id="footer"></div>
-
-      <div id="forms-container">
-        <div id="view-form-container">
-          <div id="view-form" data="hidden">
-            <form>
-              <div class="form-group">
-                <input type="text" class="form-control" name="owner" placeholder="username">
+            <div id="view-help" class="help">
+              <div class="help-textbox">
+                <p>
+                  Click the button to view a user's repository by specifying their username
+                  and repository name.
+                </p>
+                <p>
+                  Remember that only text files can be viewed. If a non-text
+                  file is in the repository, it will not be displayed properly. In this case
+                  you should use the connect feature instead.
+                </p>
               </div>
-            </form>
-            <button id="view-form-show" class="btn btn-md">Show</button>
+            </div>
+
+            <h2 id="view-header"></h2>
+
+            <div id="hide-buttons-container" style="display: none">
+              <div id="hide-history" class="fa fa-caret-right" style="left: 80%; display: none;"></div>
+              <div id="hide-fileTree" class="fa fa-caret-left" style="right: 80%; display: none;"></div>
+            </div>
+
+            <div id="receiving-files-spinner" style="display: none;">
+              <i class="fa fa-spinner fa-pulse"></i>
+              <span>Receiving files...</span>
+            </div>
+
+            <div id="history-container" style="display: none;">
+              <div id="history-header">
+                <div>History</div>
+              </div>
+
+              <div id="history-contents"></div>
+            </div>
+
+            <div id="loading-view" style="display: none;">
+              <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+            </div>
+
+            <div id="file-view-container"></div>
           </div>
-          <h3 id="view-form-show-header"></h3>
-          <div id="view-form-spinner-container" style="display: none">
-            <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+
+
+          <div role="tabpanel" class="tab-pane" id="connect">
+            <div class="main-header">
+              <h2 id="connect-btn">Connect to Repository</h2>
+            </div>
+            <div id="connect-messages" class="error-message"></div>
+
+            <div id="connect-help" class="help">
+              <div class="help-textbox">
+                <p>
+                  Click the button to connect to a user's repository by specifying their username
+                  and repository name, and pointing to a directory of your choice. The repository will
+                  then be stored in the chosen directory and will be a perfect reflection of the original.
+                </p>
+                <p>
+                  Remember that any edits you make to the files in the repository will be overwritten if the owner
+                  edits the file. You can connect to multiple repositories.
+                </p>
+              </div>
+            </div>
+
+            <div class="scrollTableContainer">
+              <div class="tHeadContainer">
+                <table id="connectedReposHead" class="tHead"></table>
+              </div>
+              <div class="tBodyContainer">
+                <table id="connectedRepos" class="tBody"></table>
+              </div>
+            </div>
           </div>
-          <div id="view-form-show-container"></div>
+
+
+          <div role="tabpanel" class="tab-pane" id="broadcast">
+            <div class="main-header">
+              <h2 id="broadcast-btn">Broadcast Repository</h2>
+            </div>
+            <div id="broadcast-messages" class="error-message"></div>
+
+            <div id="broadcast-help" class="help">
+              <div class="help-textbox">
+                <p>
+                  Click the button to broadcast a directory of your choice. You must be logged in to access
+                  this feature. Once a directory is broadcasted, it will be able to be viewed by anyone who
+                  knows your username. You can broadcast multiple directories.
+                </p>
+                <p>
+                  A maximum of 10000 files is allowed per user, a maximum of 100MB is allowed per user,
+                  and each file must be no larger than 20MB (these restrictions may change in the future). A .gitignore file can
+                  be created to prevent certain files and directories from being broadcasted. This file should follow
+                  the exact same format as a normal .gitignore file for the Git version control system.
+                </p>
+              </div>
+            </div>
+
+            <div id="broadcast-stats">
+              <div>Files: <span id="broadcast-stats-files">0</span> / 10000</div>
+              <div>Size: <span id="broadcast-stats-size">0.00</span> / 100.00MB</div>
+            </div>
+
+            <div class="scrollTableContainer">
+              <div class="tHeadContainer">
+                <table id="broadcastingReposHead" class="tHead"></table>
+              </div>
+              <div class="tBodyContainer">
+                <table id="broadcastingRepos" class="tBody"></table>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div id="connect-form-container">
-          <div id="connect-form" data="hidden">
-            <form>
-              <div class="form-group">
-                <input type="text" class="form-control" name="owner" placeholder="username">
-              </div>
-            </form>
-            <button id="connect-form-show" class="btn btn-md">Show</button>
+        <div id="right-pane"></div>
+        <div id="footer"></div>
+
+        <div id="forms-container">
+          <div id="view-form-container">
+            <div id="view-form" data="hidden">
+              <form>
+                <div class="form-group">
+                  <input type="text" class="form-control" name="owner" placeholder="username">
+                </div>
+              </form>
+              <button id="view-form-show" class="btn btn-md">Show</button>
+            </div>
+            <h3 id="view-form-show-header"></h3>
+            <div id="view-form-spinner-container" style="display: none">
+              <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+            </div>
+            <div id="view-form-show-container"></div>
           </div>
-          <h3 id="connect-form-show-header"></h3>
-          <div id="connect-form-spinner-container" style="display: none">
-            <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+
+          <div id="connect-form-container">
+            <div id="connect-form" data="hidden">
+              <form>
+                <div class="form-group">
+                  <input type="text" class="form-control" name="owner" placeholder="username">
+                </div>
+              </form>
+              <button id="connect-form-show" class="btn btn-md">Show</button>
+            </div>
+            <h3 id="connect-form-show-header"></h3>
+            <div id="connect-form-spinner-container" style="display: none">
+              <i class="fa fa-spinner fa-pulse loading-spinner"></i>
+            </div>
+            <div id="connect-form-show-container"></div>
           </div>
-          <div id="connect-form-show-container"></div>
         </div>
+
       </div>
 
+      <!-- <script src="http://localhost:8080/webpack-dev-server.js"></script>
+      <script src="http://localhost:8080/built/bundle.js"></script> -->
+      <script src="../javascripts/built/bundle.js"></script>
     </div>
-
-    <!-- <script src="http://localhost:8080/webpack-dev-server.js"></script>
-    <script src="http://localhost:8080/built/bundle.js"></script> -->
-    <script src="../javascripts/built/bundle.js"></script>
-
   </body>
 </html>
